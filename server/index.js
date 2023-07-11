@@ -35,7 +35,7 @@ app.post('/checkout-session', async (req, res) => {
 
             // TODO: MODIIFY THESE LINKS
             success_url: 'https://unsplash.com/',
-            cancel_url: 'https://www.google.com',
+            // cancel_url: 'https://www.google.com',
         })
         res.json({ url: session.url })
 
