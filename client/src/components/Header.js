@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../hooks/useAuthContext';
 // import './App.css';
 
 function Header() {
+  const { user } = useAuthContext();
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
@@ -11,18 +13,43 @@ function Header() {
     // console.log(query);
   }
 
-  function handleClick(){
+  function handleSearch() {
     navigate(`/s/photos/${query}`);
+  }
+
+  function handleClick(){
+    navigate('/plus');
+    // user ? navigate('/plus') : navigate("/login", { replace: true })
+    // if (!authenticated) {
+    //   return <Navigate replace to="/login" />;
+    // } else {
+    //   return (
+    //     <div>
+    //       <p>Welcome to your Dashboard</p>
+    //     </div>
+    //   );
+    // }
   }
 
   return (
     <>
       <nav className="navbar bg-body-tertiary">
         <div className="container-fluid">
-        <h1><Link to={'/'} className="navbar-brand">PicsForAll</Link></h1>
-          <form onSubmit={e=> e.preventDefault()} className="d-flex" role="search">
-            <input className="form-control me-2" type="search" value={query} onChange={handleChange} placeholder="Search images" aria-label="Search" />
-              <button onClick={handleClick} className="btn btn-outline-success" type="submit">Search</button>
+
+          <h1><Link to={'/'} className="navbar-brand">PicsForAll</Link></h1>
+
+          <button type="button" onClick={handleClick} className="btn btn-info">PicsForAll+</button>
+
+          <form onSubmit={e => e.preventDefault()} className="d-flex" role="search">
+            <input
+              className="form-control me-2"
+              type="search"
+              value={query}
+              onChange={handleChange}
+              placeholder="Search images"
+              aria-label="Search"
+            />
+            <button onClick={handleSearch} className="btn btn-outline-success" type="submit">Search</button>
           </form>
         </div>
       </nav>

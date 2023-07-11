@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import './gallery.css';
 import { saveAs } from 'file-saver'
 
-import Popover from './Popover';
+// import Popover from './LoginModal';
 
 
 function Gallery(props) {
