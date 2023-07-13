@@ -2,8 +2,12 @@ require("dotenv").config();
 const express = require('express');
 const dbConnect = require("./db/dbConnect");
 
+const multer = require('multer')
+const upload = multer({ dest: 'uploads/' })
+
 const userRoutes = require('./routes/user')
-const workoutRoutes = require('./routes/workout')
+const workoutRoutes = require('./routes/workout');
+const postRoutes = require('./routes/post');
 
 const app = express();
 
@@ -11,6 +15,7 @@ dbConnect();
 
 // middleware
 app.use(express.json())
+app.use('/uploads', express.static('uploads'))
 
 //Payment gateway integration
 
@@ -45,11 +50,20 @@ app.post('/checkout-session', async (req, res) => {
 })
 
 
+// upload image
+// app.post('/user/upload', upload.single('image'), function (req, res) {
+//     console.log(req.file);
+//     console.log(req.body);
+//     // console.log(req.file);
+// })
+
+
 // app.get('/', function(req, res){
 //     res.send('hello');
 // })
 
 app.use('/api/user', userRoutes);
 app.use('/api/workouts', workoutRoutes);
+app.use('/api/posts', postRoutes);
 
 app.listen(4000, () => console.log('server started in port 4000'));
