@@ -1,5 +1,5 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
-import Home from './pages/Home';
+import Home from './pages/Home2';
 import Topics from './pages/Topics';
 import SearchPage from './pages/SearchPage';
 import ImageDetails from './pages/ImageDetails';
@@ -12,6 +12,8 @@ import SharedLayout, { SharedLayout2 } from './components/SharedLayout';
 import { useAuthContext } from './hooks/useAuthContext';
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import UploadImage from './pages/UploadImage';
+import EditModal from './components/EditModal'
 
 function App() {
   const { user } = useAuthContext();
@@ -22,6 +24,8 @@ function App() {
         {/* <Route path='/login' element={!user ? <Login /> : <Navigate to='/' />} /> */}
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
+        <Route path='/upload' element={<UploadImage />} />
+        <Route path='/edit' element={<EditModal />} />
 
         <Route path='/' element={<SharedLayout />} >
           <Route index element={<Home />} />

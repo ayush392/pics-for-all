@@ -39,6 +39,7 @@ function Header() {
           <h1><Link to={'/'} className="navbar-brand">PicsForAll</Link></h1>
 
           <button type="button" onClick={handleClick} className="btn btn-info">PicsForAll+</button>
+          <button type="button" onClick={()=>navigate('/upload')} className="btn btn-success">Submit a photo</button>
 
           <form onSubmit={e => e.preventDefault()} className="d-flex" role="search">
             <input
