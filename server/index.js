@@ -1,9 +1,11 @@
 require("dotenv").config();
 const express = require('express');
 const dbConnect = require("./db/dbConnect");
+const path = require('path')
+const requireAuth = require('./middleware/requireAuth')
 
-const multer = require('multer')
-const upload = multer({ dest: 'uploads/' })
+// const multer = require('multer')
+// const upload = multer({ dest: 'uploads/' })
 
 const userRoutes = require('./routes/user')
 const workoutRoutes = require('./routes/workout');
@@ -13,17 +15,20 @@ const app = express();
 
 dbConnect();
 
+
 // middleware
 app.use(express.json())
-app.use('/uploads', express.static('uploads'))
+app.use(express.static('public'))
+app.use('/photos', express.static('public'))
+app.use('/user', express.static('public'))
 
 //Payment gateway integration
 
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 
-app.post('/checkout-session', async (req, res) => {
+app.post('/checkout-session', requireAuth, async (req, res) => {
     try {
-        console.log('post req in server successful')
+        // console.log('post req in server successful')
         const session = await stripe.checkout.sessions.create({
             // payment_method_types: ['card'],
             mode: 'payment',

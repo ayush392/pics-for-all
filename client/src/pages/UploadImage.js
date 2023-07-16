@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import { useAuthContext } from '../hooks/useAuthContext';
 
 function UploadImage() {
   const [image, setImage] = useState('');
@@ -8,23 +8,30 @@ function UploadImage() {
   const [tags, setTags] = useState('');
   const [location, setLocation] = useState('');
 
-
+  const { user } = useAuthContext();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    if (!user) {
+      navigate('/login');
+      return
+    }
+
     let formData = new FormData();
+    formData.append('username', user.username);
     formData.append('description', description);
     formData.append('tags', tags);
     formData.append('location', location);
     formData.append('image', image);
 
-    console.log(image);
     const response = await fetch('/api/posts', {
       method: 'POST',
       body: formData,
-      // headers: { 'Content-type': 'application/json' },
-      // body: JSON.stringify({ image, description, tags, location })
+      headers: {
+        'Authorization': `Bearer ${user.token}`
+      },
     })
     const json = await response.json();
     console.log(json);

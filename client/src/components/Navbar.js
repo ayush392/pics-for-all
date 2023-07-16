@@ -50,8 +50,8 @@ function Navbar() {
                     </NavLink>
                 })
             }
-            <br />
-            <hr />
+            {/* <br /> */}
+            {/* <hr /> */}
         </nav>
     )
 }

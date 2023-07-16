@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { userDetailsSchema, UserDetail } = require('./userModel')
 
 const Schema = mongoose.Schema
 
@@ -11,13 +12,17 @@ const postSchema = new Schema({
         type: Array,
         required: true,
     },
-    location: {
+    location: String,
+    image: {
         type: String,
+        required: true
     },
-    imageUrl: {
-        type: String,
-        required: true,
-    }
+    date: {
+        type: Date,
+        default: Date.now,
+    },
+    liked_by: Array,
+    user: userDetailsSchema,
 })
 
 module.exports = mongoose.model('Post', postSchema)

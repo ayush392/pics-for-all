@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import { useLogout } from '../hooks/useLogout'
 import { useAuthContext } from '../hooks/useAuthContext';
 // import './App.css';
 
 function Header() {
+  const { logout } = useLogout();
   const { user } = useAuthContext();
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
@@ -17,18 +19,8 @@ function Header() {
     navigate(`/s/photos/${query}`);
   }
 
-  function handleClick(){
-    navigate('/plus');
-    // user ? navigate('/plus') : navigate("/login", { replace: true })
-    // if (!authenticated) {
-    //   return <Navigate replace to="/login" />;
-    // } else {
-    //   return (
-    //     <div>
-    //       <p>Welcome to your Dashboard</p>
-    //     </div>
-    //   );
-    // }
+  function handleClick() {
+    user ? navigate('/upload') : navigate('/login')
   }
 
   return (
@@ -38,8 +30,7 @@ function Header() {
 
           <h1><Link to={'/'} className="navbar-brand">PicsForAll</Link></h1>
 
-          <button type="button" onClick={handleClick} className="btn btn-info">PicsForAll+</button>
-          <button type="button" onClick={()=>navigate('/upload')} className="btn btn-success">Submit a photo</button>
+          <button type="button" onClick={() => navigate('/plus')} className="btn btn-outline-info">PicsForAll+</button>
 
           <form onSubmit={e => e.preventDefault()} className="d-flex" role="search">
             <input
@@ -50,8 +41,25 @@ function Header() {
               placeholder="Search images"
               aria-label="Search"
             />
-            <button onClick={handleSearch} className="btn btn-outline-success" type="submit">Search</button>
+            <button onClick={handleSearch} className="btn btn-primary" type="submit">Search</button>
           </form>
+
+          <button type="button" onClick={handleClick} className="btn btn-outline-success">Submit a photo</button>
+
+          <div>
+            {
+              user ? <div>
+                <span className='me-2'>{user.email}</span>
+                <button className='btn btn-outline-danger' onClick={() => logout()}>Log Out</button>
+              </div>
+                :
+                <div>
+                  <Link className='me-2 btn btn-outline-primary' to={'/login'}>Login</Link>
+                  <Link className='btn btn-outline-primary' to={'/signup'}>Signup</Link>
+                </div>
+            }
+          </div>
+
         </div>
       </nav>
 

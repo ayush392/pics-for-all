@@ -9,15 +9,16 @@ function Plus() {
     const navigate = useNavigate();
 
     function handlePayment() {
-        // if (!user) {
-        // navigate("/login", { replace: true })
-        // <LoginModal/>
-        // }
-        // else {
+        if (!user) {
+            navigate('/login');
+            return
+        }
+
         fetch('/checkout-session', {
             method: 'POST',
             headers: {
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
             },
             body: JSON.stringify({ id: 1, quantity: 1 })
         })
@@ -28,28 +29,15 @@ function Plus() {
             })
             .then(({ url }) => window.location.href = url)
             .catch(e => console.log(e));
-        // }
     }
 
     return (
         <>
             <div className='container'>
                 <h1>Plus membership</h1>
-                {
-                    user ?
-                        <button className='btn btn-success' onClick={handlePayment}>Buy Now</button>
-                        :
-                        <>
-                            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                Launch demo modal
-                            </button>
-                            <LoginModal doNextTask={handlePayment} />
-                        </>
-                }
+                <br />
+                <button className='btn btn-success' onClick={handlePayment}>Buy Now</button>
             </div>
-
-            <br /><br /><br />
-
         </>
     )
 }

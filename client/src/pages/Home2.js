@@ -2,20 +2,29 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import EditModal from '../components/EditModal'
+import Gallery from '../components/Gallery';
+import { useAuthContext } from '../hooks/useAuthContext'
 
 function Home2() {
     const [test, setTest] = useState([]);
     const navigate = useNavigate();
 
+    const { user } = useAuthContext();
 
     useEffect(() => {
-        fetch('/api/posts')
+
+        fetch('/api/posts', {
+            headers: {
+                'Authorization': `Bearer ${user.token}`
+            }
+        })
             .then(res => res.json())
             .then(response => {
                 setTest(response)
-                // console.log(test)
+                // console.log(response)
             })
             .catch(e => console.log(e.message))
+
 
     }, []);
 
@@ -26,11 +35,13 @@ function Home2() {
     return (
         <div>
             <Navbar />
-            {
-                test.map(d => {
-                    return <div className="container">
-                        <h3>{d.location}</h3>
-                        <img src={`${d.imageUrl}`} alt="fks" />
+            {console.log(test)}
+            {test && <Gallery data={test} />}
+            {/* {
+                test.map((d, i) => {
+                    return <div key={i} className="container">
+                        <h2>{d.user.username}</h2>
+                        <img src={`${d.imageUrl}`} alt="fks" width="120px" />
                         <button onClick={() => navigate('/edit', {
                             state: {
                                 id: d._id,
@@ -41,13 +52,14 @@ function Home2() {
                         })}>
                             edit
                         </button>
-                        {/* <button type="button" className="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editModal">
+                         <button type="button" className="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editModal">
                             edit
-                        </button> */}
+                        </button> 
                         <br />
                     </div>
                 })
-            }
+            }  */}
+
         </div>
     )
 }

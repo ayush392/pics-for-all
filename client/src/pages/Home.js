@@ -3,30 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import Gallery from '../components/Gallery';
 import Navbar from '../components/Navbar';
 // import Header from '../components/Header';
-import { clientKey } from '../ApiKey/keys';
+import { useAuthContext } from '../hooks/useAuthContext'
 
 function Home() {
   const [data, setData] = useState([]);
-  // const url = `https://api.unsplash.com/search/photos/?query=tree&client_id=${clientKey}`;
-  const url = `https://api.unsplash.com/photos/?client_id=${clientKey}`;
+  const url = '/api/posts';
   const navigate = useNavigate();
+  const { user } = useAuthContext();
 
-
-  useEffect(()=>{
+  useEffect(() => {
     fetch(url)
-            .then(res => res.json())
-            .then(response => {
-              setData(response)
-              // console.log(response);
-            })
-            .catch(e => console.log(e.message));
+      .then(res => res.json())
+      .then(response => {
+        setData(response)
+        // console.log(response);
+      })
+      .catch(e => console.log(e.message));
   }, [url]);
 
-    
   return (
     <div>
-        <Navbar/>
-        <Gallery data={data} />
+      <Navbar />
+      {/* {console.log(data)} */}
+      {data && <Gallery data={data} />}
     </div>
   )
 }
