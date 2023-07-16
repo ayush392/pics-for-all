@@ -1,14 +1,21 @@
 import { useState } from 'react'
 import { useLogin } from '../hooks/useLogin';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login, error, isLoading } = useLogin();
 
     const handleSubmit = async function (e) {
         e.preventDefault();
-        await login(email, password)
+        try {
+            await login(email, password)
+            navigate(-1, { replace: true })
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -33,6 +40,7 @@ function Login() {
             <button className='btn btn-dark' disabled={isLoading}>Login</button>
 
             {error && <div className='error'>{error}</div>}
+            <p className="dark">Don't have an account? <a href='/signup'>Sign Up</a></p>
 
         </form>
     )

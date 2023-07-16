@@ -16,8 +16,7 @@ function Gallery(props) {
   const { data } = props;
 
   const downloadImage = (e) => {
-    // console.log(e.target.value);
-    saveAs(e.target.value, e.target.name);
+    console.log(e);
   }
 
   function handleHover(e) {
@@ -52,21 +51,31 @@ function Gallery(props) {
         >
           <Masonry gutter={"1.5rem"}>
             {
-              data.map(x => {
-                return <div className='pos' key={x.id}>
-                  <div className='overlay' onClick={() => navigate(`/photos/${x.id}`)}></div>
+              data && data.map(x => {
+                return <div className='pos' key={x._id}>
+                  <div className='overlay' onClick={() => navigate(`/photos/${x._id}`)}></div>
 
-                  <img className='a' src={x.urls.small} alt='xyz' />
-                  <button className='like-btn'>Like</button>
+                  <img className='a' src={x.image} alt='xyz' />
+                  {/* <button className='like-btn'>Like</button> */}
+                  <button className='like-btn' onClick={() => navigate('/edit', {
+                    state: {
+                      id: x._id,
+                      description: x.description,
+                      tags: x.tags,
+                      location: x.location
+                    }
+                  })}>
+                    edit
+                  </button>
                   <div className='flex-container hidden'>
                     {/* <div className="pop">
                     <Popover />
                   </div> */}
                     <div className='profile' name={x.user.username} onMouseOver={handleHover} onClick={() => navigate(`../user/${x.user.username}`)}>
-                      <img className='profile-img' src={x.user.profile_image.small} alt='user' />
-                      <span className='profile-name' >{x.user.name}</span>
+                      <img className='profile-img' width="25px" src="https://png.pngtree.com/png-clipart/20210520/ourmid/pngtree-small-eye-handsome-boys-colorless-character-avatar-png-image_3286527.jpg" alt='user' />
+                      <span className='profile-name' >{x.user.fName + " " + x.user.lName}</span>
                     </div>
-                    <button className='download-btn' name={x.user.name + '-' + x.id + '.jpg'} value={x.urls.small} onClick={downloadImage}>Download</button>
+                    <button className='download-btn' onClick={() => downloadImage(x.image)}>Download</button>
                   </div>
                 </div>
               })
