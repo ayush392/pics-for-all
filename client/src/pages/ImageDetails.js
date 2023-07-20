@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { saveAs } from 'file-saver'
+import FileDownload from 'js-file-download';
 // import Error from './Error';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 
 function ImageDetails() {
     const { state } = useLocation();
-    const [isLike, setIsLike] = useState(state.isLike);
+    const [isLike, setIsLike] = useState(state ? state.isLike : false);
     const { id } = useParams();
     const navigate = useNavigate();
     const url = `/api/posts/photos/${id}`;
@@ -23,9 +23,13 @@ function ImageDetails() {
     }, [url, user]);
 
 
-    const downloadImage = (e) => {
-        // console.log(e.target.value);
-        saveAs(e.target.value, e.target.name);
+    function downloadImage(id, filename) {
+        fetch(`/api/posts/download/${id}`)
+            .then(res => res.blob())
+            .then(response => {
+                FileDownload(response, filename);
+            })
+            .catch(e => console.log(e));
     }
 
     function likePost(postId, username) {
@@ -91,11 +95,11 @@ function ImageDetails() {
                             Download free
                         </button>
                         <ul className="dropdown-menu">
-                            <li><button className="dropdown-item" name={imgDetail.user.fName + '-' + imgDetail._id + '.jpg'} value={imgDetail.image} onClick={downloadImage}>Small</button></li>
-                            <li><button className="dropdown-item" name={imgDetail.user.fName + '-' + imgDetail._id + '.jpg'} value={imgDetail.image} onClick={downloadImage}>Medium</button></li>
-                            <li><button className="dropdown-item" name={imgDetail.user.fName + '-' + imgDetail._id + '.jpg'} value={imgDetail.image} onClick={downloadImage}>Large</button></li>
+                            <li><button className="dropdown-item" onClick={() => downloadImage(imgDetail._id, imgDetail.user.fName + '-' + imgDetail._id + '.jpg')}>Small</button></li>
+                            <li><button className="dropdown-item" name={imgDetail.user.fName + '-' + imgDetail._id + '.jpg'} value={imgDetail.image} >Medium</button></li>
+                            <li><button className="dropdown-item" name={imgDetail.user.fName + '-' + imgDetail._id + '.jpg'} value={imgDetail.image} >Large</button></li>
                             <li><hr className="dropdown-divider" /></li>
-                            <li><button className="dropdown-item" name={imgDetail.user.fName + '-' + imgDetail._id + '.jpg'} value={imgDetail.image} onClick={downloadImage}>Original Size</button></li>
+                            <li><button className="dropdown-item" name={imgDetail.user.fName + '-' + imgDetail._id + '.jpg'} value={imgDetail.image} >Original Size</button></li>
                         </ul>
                     </div>
 

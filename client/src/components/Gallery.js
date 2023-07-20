@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
 import { useNavigate } from 'react-router-dom'
 import './gallery.css';
-import { saveAs } from 'file-saver'
+import FileDownload from 'js-file-download';
 import Avatar from './Avatar';
 import { useAuthContext } from '../hooks/useAuthContext';
 
@@ -17,8 +17,13 @@ function Gallery(props) {
   // console.log(props);
   const { data, setData } = props;
 
-  const downloadImage = (e) => {
-    console.log(e);
+  function downloadImage(id, filename) {
+    fetch(`/api/posts/download/${id}`)
+      .then(res => res.blob())
+      .then(response => {
+        FileDownload(response, filename);
+      })
+      .catch(e => console.log(e));
   }
 
   function handleHover(e) {
@@ -143,7 +148,7 @@ function Gallery(props) {
                       <Avatar w='25px' ch={x.user.fName[0]} str={x.user.username} />
                       <span className='ms-2 profile-name' >{x.user.fName + " " + x.user.lName}</span>
                     </div>
-                    <button className='download-btn' onClick={() => downloadImage(x.image)}>Download</button>
+                    <button className='download-btn' onClick={() => downloadImage(x._id, x.user.fName + '-' + x._id + '.jpg')}>Download</button>
                   </div>
                 </div>
               })

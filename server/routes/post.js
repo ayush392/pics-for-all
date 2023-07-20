@@ -92,6 +92,12 @@ async function getPost(req, res, next) {
     next()
 }
 
+router.get('/download/:id', getPost, async (req, res) => {
+    console.log('96');
+    let imgPath = res.post.image;
+    res.download(`./public/${imgPath}`)
+})
+
 // GET a single image
 router.get('/photos/:id', getPost, async (req, res) => {
     res.json(res.post);
