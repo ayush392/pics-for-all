@@ -1,19 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
 import { useNavigate } from 'react-router-dom'
 import './gallery.css';
 import { saveAs } from 'file-saver'
+import Avatar from './Avatar';
+import { useAuthContext } from '../hooks/useAuthContext';
+
 
 // import Popover from './LoginModal';
 
 
 function Gallery(props) {
+  const { user } = useAuthContext();
 
   const navigate = useNavigate();
   // console.log(props);
-  const [images, setImages] = useState([]);
-  // const [like]
-  const { data } = props;
+  const { data, setData } = props;
 
   const downloadImage = (e) => {
     console.log(e);
@@ -27,6 +29,61 @@ function Gallery(props) {
     //   .then(res=>res.json())
     //   .then(response => setImages(response))
     //   .catch(e => console.log(e));
+  }
+
+  function likePost(postId, username) {
+    if (!user) {
+      navigate('/login');
+      return
+    }
+    fetch('/api/posts/like', {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Bearer ${user.token}`
+      },
+      body: JSON.stringify({ postId, username })
+    })
+      .then(res => res.json())
+      .then(response => {
+        const newData = data.map(posts => {
+          if (posts._id == response._id)
+            return response;
+          else
+            return posts
+        })
+        setData(newData);
+        console.log(response);
+      })
+      .catch(e => console.log(e.message))
+    // setLike(!isLike);
+  }
+  function unlikePost(postId, username) {
+    if (!user) {
+      navigate('/login');
+      return
+    }
+    fetch('/api/posts/unlike', {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Bearer ${user.token}`
+      },
+      body: JSON.stringify({ postId, username })
+    })
+      .then(res => res.json())
+      .then(response => {
+        const newData = data.map(posts => {
+          if (posts._id == response._id)
+            return response;
+          else
+            return posts
+        })
+        setData(newData);
+        console.log(response);
+      })
+      .catch(e => console.log(e.message))
+    // setLike(!isLike);
   }
 
   return (
@@ -53,11 +110,15 @@ function Gallery(props) {
             {
               data && data.map(x => {
                 return <div className='pos' key={x._id}>
-                  <div className='overlay' onClick={() => navigate(`/photos/${x._id}`)}></div>
+                  <div className='overlay' onClick={() => navigate(`/photos/${x._id}`, {
+                    state: {
+                      isLike: (x.liked_by.includes(x.user.username))
+                    }
+                  })}></div>
 
                   <img className='a' src={x.image} alt='xyz' />
-                  {/* <button className='like-btn'>Like</button> */}
-                  <button className='like-btn' onClick={() => navigate('/edit', {
+
+                  {user && (user.username === x.user.username) && <button className='edit-btn' onClick={() => navigate('/edit', {
                     state: {
                       id: x._id,
                       description: x.description,
@@ -65,15 +126,22 @@ function Gallery(props) {
                       location: x.location
                     }
                   })}>
-                    edit
-                  </button>
+                    Edit 🖋
+                  </button>}
+
+                  {user && x.liked_by.includes(user.username)
+                    ?
+                    <button className='like-btn red' onClick={() => user ? unlikePost(x._id, user.username) : navigate('/login')} > ❤ </button>
+                    :
+                    <button className='like-btn' onClick={() => user ? likePost(x._id, user.username) : navigate('/login')} > ❤ </button>
+                  }
+
+
                   <div className='flex-container hidden'>
-                    {/* <div className="pop">
-                    <Popover />
-                  </div> */}
+
                     <div className='profile' name={x.user.username} onMouseOver={handleHover} onClick={() => navigate(`../user/${x.user.username}`)}>
-                      <img className='profile-img' width="25px" src="https://png.pngtree.com/png-clipart/20210520/ourmid/pngtree-small-eye-handsome-boys-colorless-character-avatar-png-image_3286527.jpg" alt='user' />
-                      <span className='profile-name' >{x.user.fName + " " + x.user.lName}</span>
+                      <Avatar w='25px' ch={x.user.fName[0]} str={x.user.username} />
+                      <span className='ms-2 profile-name' >{x.user.fName + " " + x.user.lName}</span>
                     </div>
                     <button className='download-btn' onClick={() => downloadImage(x.image)}>Download</button>
                   </div>

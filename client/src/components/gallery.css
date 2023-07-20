@@ -1,24 +1,25 @@
-
-.topic-link{
+.topic-link {
     color: gray;
     margin: 0.5rem;
     /* padding: 5px; */
     display: inline-block;
     text-decoration: none;
 }
-.active-topic{
+
+.active-topic {
     color: black;
     padding-bottom: 5px;
     /* text-decoration: underline; */
     border-bottom: 2px solid black;
 }
 
-.card-container{
+.card-container {
     width: 87%;
     padding: 1.25rem;
     margin: 0 auto;
 }
-.pos{
+
+.pos {
     position: relative;
 }
 
@@ -31,36 +32,52 @@
     cursor: zoom-in;
 }
 
-img.a{
+img.a {
     width: 100%;
 }
+
 .like-btn {
     position: absolute;
     top: 18px;
     right: 18px;
     z-index: -1;
 }
-button{
+
+.red {
+    /* background-color: white; */
+    color: red;
+}
+
+.edit-btn {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: -1;
+}
+
+button {
     border: none;
     border-radius: 5px;
 }
 
-.box{
+.box {
     width: 50%;
     margin: 0 auto;
     justify-content: space-between;
 }
 
-.inner-box{
+.inner-box {
     display: flex;
     justify-content: space-between;
     max-width: 85%;
     padding: 56px 20px 72px 20px;
 }
-.underline{
+
+.underline {
     border-bottom: 2px solid #d0d0d0;
     padding-left: 18px;
 }
+
 .flex-container {
     display: flex;
     justify-content: space-between;
@@ -68,21 +85,23 @@ button{
     padding: 16px 18px;
 }
 
-.hidden{
+.hidden {
     position: absolute;
     bottom: 0;
     color: #d0d0d0;
     z-index: -1;
 }
-.profile{
+
+.profile {
     cursor: pointer;
 }
+
 .profile-img {
     border-radius: 50%;
     margin-right: 0.5rem;
 }
 
-.tags{
+.tags {
     background-color: #eee;
     border-radius: 5px;
     color: gray;
@@ -91,7 +110,7 @@ button{
     display: inline-block;
 }
 
-.img-det{
+.img-det {
     max-height: 80vh;
     max-width: 100vw;
     display: block;
@@ -100,16 +119,22 @@ button{
 
 /* Hover effects */
 
-.pos:hover .hidden, .pos:hover .like-btn{
-    z-index: 5;    
+.pos:hover .hidden,
+.pos:hover .like-btn,
+.pos:hover .edit-btn {
+    z-index: 5;
 }
-.pos:hover .overlay{
+
+.pos:hover .overlay {
     z-index: 1;
 }
-.profile:hover{
+
+.profile:hover {
     color: #fff;
 }
-.download-btn:hover, .like-btn:hover{
+
+.download-btn:hover,
+.edit-btn:hover {
     background-color: white;
     color: #000;
 }

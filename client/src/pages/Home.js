@@ -25,7 +25,7 @@ function Home() {
     <div>
       <Navbar />
       {/* {console.log(data)} */}
-      {data && <Gallery data={data} />}
+      {data && <Gallery data={data} setData={setData} />}
     </div>
   )
 }

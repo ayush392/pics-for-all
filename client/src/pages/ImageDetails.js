@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { saveAs } from 'file-saver'
 // import Error from './Error';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 
 function ImageDetails() {
+    const { state } = useLocation();
+    const [isLike, setIsLike] = useState(state.isLike);
     const { id } = useParams();
     const navigate = useNavigate();
     const url = `/api/posts/photos/${id}`;
     const [imgDetail, setImgDetail] = useState([]);
-    const [isLike, setLike] = useState(false);
     const { user } = useAuthContext();
     const avatarUrl = "https://png.pngtree.com/png-clipart/20210520/ourmid/pngtree-small-eye-handsome-boys-colorless-character-avatar-png-image_3286527.jpg"
 
@@ -43,9 +44,9 @@ function ImageDetails() {
             .then(res => res.json())
             .then(response => {
                 console.log(response)
+                setIsLike(true);
             })
             .catch(e => console.log(e.message))
-        // setLike(!isLike);
     }
     function unlikePost(postId, username) {
         if (!user) {
@@ -63,14 +64,15 @@ function ImageDetails() {
             .then(res => res.json())
             .then(response => {
                 console.log(response)
+                setIsLike(false);
             })
             .catch(e => console.log(e.message))
-        // setLike(!isLike);
     }
 
     return (
         <>
-            {console.log(imgDetail)}
+            {console.log(isLike, 80)}
+            {/* {setIsLike(imgDetail.liked_by.includes(user.username))} */}
             {imgDetail.user &&
                 <div className='flex-container'>
                     <div className='profile' onClick={() => navigate(`../user/${imgDetail.user.username}`)}>
@@ -79,8 +81,12 @@ function ImageDetails() {
                     </div>
 
                     <div>
-                        <button className='btn btn-outline-secondary me-2' onClick={() => likePost(imgDetail._id, imgDetail.user.username)} > ❤ </button>
-                        <button className='btn btn-outline-danger me-2' onClick={() => unlikePost(imgDetail._id, imgDetail.user.username)} > ❤ </button>
+                        {
+                            (user && isLike) ?
+                                <button className='btn btn-outline-danger me-2' onClick={() => user ? unlikePost(imgDetail._id, user.username) : navigate('/login')} > ❤ </button>
+                                :
+                                <button className='btn btn-outline-secondary me-2' onClick={() => user ? likePost(imgDetail._id, user.username) : navigate('/login')} > ❤ </button>
+                        }
                         <button type="button" className="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                             Download free
                         </button>
@@ -92,6 +98,7 @@ function ImageDetails() {
                             <li><button className="dropdown-item" name={imgDetail.user.fName + '-' + imgDetail._id + '.jpg'} value={imgDetail.image} onClick={downloadImage}>Original Size</button></li>
                         </ul>
                     </div>
+
                 </div>
             }
 

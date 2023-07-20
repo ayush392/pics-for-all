@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { clientKey } from '../ApiKey/keys';
+import Avatar from './Avatar';
 
 function UserInfoBox() {
-  const { userName } = useParams();
-  const userUrl = `https://api.unsplash.com/users/${userName}/?client_id=${clientKey}`;
+  const { username } = useParams();
+  const userUrl = `/api/user/info/${username}`;
 
   const [userInfo, setUserInfo] = useState([]);
 
@@ -12,53 +13,41 @@ function UserInfoBox() {
     fetch(userUrl)
       .then(res => res.json())
       .then(response => {
-        setUserInfo(response);
-        console.log(response);
+        setUserInfo(response[0]);
+        console.log(response[0], 17);
       })
       .catch(e => console.log(e));
-  }, []);
+  }, [userUrl]);
 
   return (
     <>
       <div className='box'>
         <div className="inner-box">
           <div>
-            {userInfo.profile_image && <img className='profile-img' src={`${userInfo.profile_image.large}`} alt="..." />}
+            {console.log(userInfo, 27)}
+            {userInfo && <Avatar w='150px' ch={userInfo.fName ? userInfo.fName[0] : ' '} str={username} />}
           </div>
           <div>
             <div>
-              <h1>{`${userInfo.name}`}</h1>
+              <h1>{`${userInfo.fName} ${userInfo.lName}`}</h1>
               <button>share</button>
             </div>
             <p>{`@${userInfo.username}`}</p>
             <p>{
-              userInfo.bio ? userInfo.bio : `Download free, beautiful high-quality photos curated by ${userInfo.name}.`
+              `Download free, beautiful high-quality photos curated by ${userInfo.fName}.`
             }</p>
-            {userInfo.tags && userInfo.tags.custom.length > 0 && <>
-              <p>Interests</p>
-              {userInfo.tags.custom.map((x, index) => <span key={index} className='tags'>{x.title.charAt(0).toUpperCase() + x.title.slice(1)}</span>)}
-            </>
+            {
+              userInfo.tags && userInfo.tags.custom.length > 0 && <>
+                <p>Interests</p>
+                {userInfo.tags.custom.map((x, index) => <span key={index} className='tags'>{x.title.charAt(0).toUpperCase() + x.title.slice(1)}</span>)}
+              </>
             }
           </div>
         </div>
       </div>
 
       {/* <br /> */}
-      <div className="underline">
 
-        <NavLink
-          className={({ isActive }) => isActive ? 'active-topic topic-link' : 'topic-link'}
-          to={`./`}
-        >
-         🖼 Photos {userInfo.total_photos}
-        </NavLink>
-        <NavLink
-          className={({ isActive }) => isActive ? 'active-topic topic-link' : 'topic-link'}
-          to={`likes`}
-        >
-          ❤ Likes {userInfo.total_likes}
-        </NavLink>
-      </div>
       <br />
     </>
   )

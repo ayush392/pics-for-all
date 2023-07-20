@@ -21,6 +21,7 @@ app.use(express.json())
 app.use(express.static('public'))
 app.use('/photos', express.static('public'))
 app.use('/user', express.static('public'))
+app.use('/likes', express.static('public'))
 
 //Payment gateway integration
 

@@ -133,8 +133,9 @@ router.delete('/:id', requireAuth, getPost, async (req, res) => {
 router.put('/like', requireAuth, async (req, res) => {
     const { postId, username } = req.body;
     try {
-        await Post.findByIdAndUpdate({ _id: postId }, { $push: { liked_by: username } }, { new: true });
-        res.json({ message: 'image liked by ' + username })
+        const x = await Post.findByIdAndUpdate({ _id: postId }, { $push: { liked_by: username } }, { new: true });
+        // console.log(x, 137);
+        res.json(x)
     } catch (e) {
         res.status(500).json({ message: e.message })
     }
@@ -143,8 +144,9 @@ router.put('/like', requireAuth, async (req, res) => {
 router.put('/unlike', requireAuth, async (req, res) => {
     const { postId, username } = req.body;
     try {
-        await Post.findByIdAndUpdate({ _id: postId }, { $pull: { liked_by: username } }, { new: true });
-        res.json({ message: 'image disliked by ' + username })
+        const x = await Post.findByIdAndUpdate({ _id: postId }, { $pull: { liked_by: username } }, { new: true });
+        // res.json({ message: 'image disliked by ' + username })
+        res.json(x);
     } catch (e) {
         res.status(500).json({ message: e.message })
     }

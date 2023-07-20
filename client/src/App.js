@@ -7,7 +7,7 @@ import UserProfile from './pages/UserProfile';
 import Error from './pages/Error';
 import Plus from './pages/Plus';
 import './App.css';
-import SharedLayout, { SharedLayout2 } from './components/SharedLayout';
+import SharedLayout from './components/SharedLayout';
 
 import { useAuthContext } from './hooks/useAuthContext';
 import Signup from "./pages/Signup";
@@ -33,10 +33,8 @@ function App() {
           <Route path='s/photos/:query' element={<SearchPage />} />
           <Route path='photos/:id' element={<ImageDetails />} />
           <Route path='plus' element={<Plus />} />
-          <Route path='user/:userName/' element={<SharedLayout2 />}>
-            <Route index element={<UserProfile val='photos' />} />
-            <Route path='likes' element={<UserProfile val='likes' />} />
-          </Route>
+          <Route path='/user/:username' element={<UserProfile val='posts' />} />
+          <Route path='/likes/:username' element={<UserProfile val='likes' />} />
           {/* <Route path='*' element={<Error />} /> */}
         </Route>
         <Route path='*' element={<Error />} />

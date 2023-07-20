@@ -6,8 +6,8 @@ import { Outlet } from 'react-router-dom';
 export default function SharedLayout() {
   return (
     <>
-        <Header />
-        <Outlet/>
+      <Header />
+      <Outlet />
     </>
   )
 }
@@ -16,10 +16,10 @@ export default function SharedLayout() {
 function SharedLayout2() {
   return (
     <>
-      <UserInfo/>
+      <UserInfo />
       <Outlet />
     </>
   )
 }
 
-export {SharedLayout2};
+export { SharedLayout2 };
