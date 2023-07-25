@@ -72,21 +72,14 @@ app.use('/api/user', userRoutes);
 app.use('/api/posts', postRoutes);
 
 //Serving the frontend
-app.use(express.static(path.join(__dirname, './client/build')));
+app.use(express.static(path.join(__dirname, "./client/build")));
 
-app.get('*', function (_, res) {
-    res.sendFile(
-        path.join(__dirname, './client/build/index.html'),
-        function (err) {
-            res.status(500).send(err);
-        }
-    )
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './client/build/index.html'));
 });
 
-let port = process.env.PORT;
-if (port == null || port == "") {
-    port = 4000;
-}
+let port = process.env.PORT || 4000;
+console.log(port);
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
 });
