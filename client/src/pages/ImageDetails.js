@@ -75,7 +75,7 @@ function ImageDetails() {
 
     return (
         <>
-            {console.log(isLike, 80)}
+            {console.log(imgDetail, 80)}
             {/* {setIsLike(imgDetail.liked_by.includes(user.username))} */}
             {imgDetail.user &&
                 <div className='flex-container'>
@@ -127,27 +127,19 @@ function ImageDetails() {
             }
 
             <div className='m-1 ps-3 pe-3'>
-                <h4>{imgDetail.description}</h4>
-                {imgDetail.description && <p>{imgDetail.description}</p>}
-
-                {imgDetail?.location && <p>📍 {imgDetail.location}</p>}
-                <p>📅 Published on {Date.now()}</p>
-                {/* {imgDetail.exif && imgDetail.exif.name && <p>📷 {imgDetail.exif.name}</p>} */}
+                {imgDetail.description && <h4>{imgDetail.description}</h4>}
+                {imgDetail.location && <p>📍 {imgDetail.location}</p>}
+                {imgDetail.date && <p>📅 Published on {new Date(imgDetail.date).toLocaleDateString()}</p>}
                 <p>🛡 Free to use under the PicsForAll License</p>
             </div>
 
-            {/* {imgDetail.tags &&
+            {imgDetail.tags &&
                 <div className='m-1 p-3 pt-0'>
-                    {(imgDetail.tags.split()).map((x, index) => <span className='tags' key={index}>{
-                        x.type !== 'landing_page' ?
-                            x.title.charAt(0).toUpperCase() + x.title.slice(1)
-                            : x.source.title
-                    }
-                    </span>)}
+                    {imgDetail.tags.map((x, i) => {
+                        return <span className="tags" key={i}>{x}</span>
+                    })}
                 </div>
-            } */}
-            <h6>{imgDetail?.tags}</h6>
-
+            }
             <br />
         </>
     )

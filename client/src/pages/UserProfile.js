@@ -40,8 +40,7 @@ function UserProfile({ val }) {
           ❤ Likes {userInfo?.total_likes}
         </NavLink>
       </nav>
-
-      {userInfo && <Gallery data={userInfo} />}
+      {userInfo && <Gallery data={userInfo} setData={setUserInfo} />}
     </>
   )
 }
