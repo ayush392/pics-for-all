@@ -8,7 +8,6 @@ const requireAuth = require('./middleware/requireAuth')
 // const upload = multer({ dest: 'uploads/' })
 
 const userRoutes = require('./routes/user')
-const workoutRoutes = require('./routes/workout');
 const postRoutes = require('./routes/post');
 
 const app = express();
@@ -70,7 +69,24 @@ app.post('/checkout-session', requireAuth, async (req, res) => {
 // })
 
 app.use('/api/user', userRoutes);
-app.use('/api/workouts', workoutRoutes);
 app.use('/api/posts', postRoutes);
 
-app.listen(4000, () => console.log('server started in port 4000'));
+//Serving the frontend
+app.use(express.static(path.join(__dirname, './client/build')));
+
+app.get('*', function (_, res) {
+    res.sendFile(
+        path.join(__dirname, './client/build/index.html'),
+        function (err) {
+            res.status(500).send(err);
+        }
+    )
+});
+
+let port = process.env.PORT;
+if (port == null || port == "") {
+    port = 4000;
+}
+app.listen(port, function () {
+    console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
+});
