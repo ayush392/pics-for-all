@@ -24,7 +24,7 @@ router.get('/search/:query', async (req, res) => {
     try {
         // { email: new RegExp(`^${emailVariable}$`, 'i') }
         const post = await Post.find({ tags: new RegExp(`^${query}$`, 'i') })
-        console.log(post, 28);
+        // console.log(post, 28);
         res.json(post);
     } catch (e) {
         res.status(500).json({ message: e.message })
@@ -113,7 +113,7 @@ async function getPost(req, res, next) {
 }
 
 router.get('/download/:id', getPost, async (req, res) => {
-    console.log('96');
+    // console.log('96');
     let imgPath = res.post.image;
     res.download(`./public/${imgPath}`)
 })
@@ -132,7 +132,7 @@ router.patch('/:id', requireAuth, getPost, async (req, res) => {
         tagsArr[idx] = ele.trim();
     });
 
-    console.log(description, tags, location);
+    // console.log(description, tags, location);
     res.post.description = description
     res.post.tags = tagsArr
     res.post.location = location
