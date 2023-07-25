@@ -18,7 +18,21 @@ router.get('/', async (req, res) => {
     }
 })
 
+// Search images with given query
+router.get('/search/:query', async (req, res) => {
+    const query = req.params.query;
+    try {
+        // { email: new RegExp(`^${emailVariable}$`, 'i') }
+        const post = await Post.find({ tags: new RegExp(`^${query}$`, 'i') })
+        console.log(post, 28);
+        res.json(post);
+    } catch (e) {
+        res.status(500).json({ message: e.message })
+    }
+})
 
+
+//POST a new image
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public')
@@ -33,9 +47,15 @@ const upload = multer({ storage: storage })
 router.post('/', requireAuth, upload.single('image'), async (req, res) => {
     const { description, tags, location, username } = req.body;
     const userDetails = await UserDetail.findOne({ username })
+
+    const tagsArr = tags.split(',');
+    tagsArr.forEach((ele, idx) => {
+        tagsArr[idx] = ele.trim();
+    });
+
     const savePost = new Post({
         description: description,
-        tags: tags,
+        tags: tagsArr,
         location: location,
         image: req.file.filename,
         user: userDetails,
@@ -107,9 +127,14 @@ router.get('/photos/:id', getPost, async (req, res) => {
 router.patch('/:id', requireAuth, getPost, async (req, res) => {
     const { description, tags, location } = req.body;
 
+    const tagsArr = tags.split(',');
+    tagsArr.forEach((ele, idx) => {
+        tagsArr[idx] = ele.trim();
+    });
+
     console.log(description, tags, location);
     res.post.description = description
-    res.post.tags = tags
+    res.post.tags = tagsArr
     res.post.location = location
 
     try {
@@ -135,7 +160,7 @@ router.delete('/:id', requireAuth, getPost, async (req, res) => {
     }
 })
 
-// router.put('/like', requireLogin, (req,res)=>{})
+// LIKE a post
 router.put('/like', requireAuth, async (req, res) => {
     const { postId, username } = req.body;
     try {

@@ -43,7 +43,8 @@ function Navbar() {
                     return <NavLink
                         className={({ isActive }) => isActive ? 'active-topic topic-link' : 'topic-link'}
                         key={index}
-                        to={`/t/${val.slug}`}
+                        // to={`/t/${val.slug}`
+                        to={`./x/#`}
                         state={val}
                     >
                         {val.title}
