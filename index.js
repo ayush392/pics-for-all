@@ -66,7 +66,7 @@ app.post('/checkout-session', requireAuth, async (req, res) => {
 app.use('/api/user', userRoutes);
 app.use('/api/posts', postRoutes);
 
-if (app.settings.env == 'production') {
+if (app.settings.env !== 'development') {
     //Serving the frontend
     app.use(express.static(path.join(__dirname, "./client/build")));
 
