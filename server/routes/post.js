@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 const Post = require('../models/postModel');
 const { UserDetail } = require('../models/userModel')
-const fs = require('fs');
 const path = require('path')
 const requireAuth = require('../middleware/requireAuth')
 
 const multer = require('multer')
+const firebase = require("firebase/app");
+const fbStorage = require("firebase/storage");
 
 // GET all images
 router.get('/', async (req, res) => {
@@ -33,16 +34,22 @@ router.get('/search/:query', async (req, res) => {
 
 
 //POST a new image
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public')
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname))
-    }
-})
+const firebaseConfig = {
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.AUTH_DOMAIN,
+    projectId: process.env.PROJECT_ID,
+    storageBucket: process.env.STORAGE_BUCKET,
+    messagingSenderId: process.env.SENDER_ID,
+    appId: process.env.APP_ID,
+    measurementId: process.env.MEASUREMENT_ID
+};
 
-const upload = multer({ storage: storage })
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
+
+const storage = fbStorage.getStorage(app)
+const upload = multer({ storage: multer.memoryStorage() })
 
 router.post('/', requireAuth, upload.single('image'), async (req, res) => {
     const { description, tags, location, username } = req.body;
@@ -53,42 +60,76 @@ router.post('/', requireAuth, upload.single('image'), async (req, res) => {
         tagsArr[idx] = ele.trim();
     });
 
-    const savePost = new Post({
-        description: description,
-        tags: tagsArr,
-        location: location,
-        image: req.file.filename,
-        user: userDetails,
-    })
-
     try {
-        const response = await savePost.save()
-        res.status(201).json(response)
-    } catch (e) {
+        const storageRef = fbStorage.ref(storage, `files/${req.file.filename + " " + Date()}`)
+
+        const metadata = {
+            contentType: req.file.mimetype
+        }
+
+        // Upload the file in the bucket storage
+        const snapshot = await fbStorage.uploadBytesResumable(
+            storageRef,
+            req.file.buffer,
+            metadata
+        )
+        //by using uploadBytesResumable we can control the progress of uploading like pause, resume, cancel
+
+        // Grab the public url
+        const downloadURL = await fbStorage.getDownloadURL(snapshot.ref)
+
+        const newPost = new Post({
+            description: description,
+            tags: tagsArr,
+            location: location,
+            image: downloadURL,
+            user: userDetails,
+        })
+
+        const response = await newPost.save();
+
+        console.log("File successfully uploaded.")
+        res.status(201).json({
+            message: "file uploaded to firebase storage",
+            name: req.file.originalname,
+            type: req.file.mimetype,
+            downloadURL: downloadURL
+        })
+    } catch (error) {
         res.status(400).json({ message: e.message })
     }
 })
 
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, 'public')
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname))
+//     }
+// })
 
+// const upload = multer({ storage: storage })
 
-// POST a new image
-// router.post('/', upload.single('image'), async (req, res) => {
-//     console.log(req.file);
+// router.post('/', requireAuth, upload.single('image'), async (req, res) => {
 //     const { description, tags, location, username } = req.body;
-//     // const tagArray = tags.split(',');
-//     // console.log(imageUrl);
-//     console.log(req.file.path);
 //     const userDetails = await UserDetail.findOne({ username })
-//     const newPost = new Post({
+
+//     const tagsArr = tags.split(',');
+//     tagsArr.forEach((ele, idx) => {
+//         tagsArr[idx] = ele.trim();
+//     });
+
+//     const savePost = new Post({
 //         description: description,
-//         tags: tags,
+//         tags: tagsArr,
 //         location: location,
-//         imageUrl: req.file.path,
+//         image: req.file.filename,
 //         user: userDetails,
 //     })
 
 //     try {
-//         const response = await newPost.save()
+//         const response = await savePost.save()
 //         res.status(201).json(response)
 //     } catch (e) {
 //         res.status(400).json({ message: e.message })
@@ -148,11 +189,9 @@ router.patch('/:id', requireAuth, getPost, async (req, res) => {
 // DELETE an image
 router.delete('/:id', requireAuth, getPost, async (req, res) => {
     let imgUrl = res.post.image;
-    fs.unlink('public/' + imgUrl, function (err) {
-        if (err) throw err;
-        console.log('File deleted!');
-    });
+    const desertRef = fbStorage.ref(storage, imgUrl);
     try {
+        await fbStorage.deleteObject(desertRef)
         await res.post.deleteOne()
         res.json({ message: 'post deleted successfully' })
     } catch (e) {
