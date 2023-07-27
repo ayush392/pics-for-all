@@ -1,14 +1,14 @@
 require("dotenv").config();
 const express = require('express');
-const dbConnect = require("./src/db/dbConnect");
+const dbConnect = require("./db/dbConnect");
 const path = require('path')
-const requireAuth = require('./src/middleware/requireAuth')
+const requireAuth = require('./middleware/requireAuth')
 
 // const multer = require('multer')
 // const upload = multer({ dest: 'uploads/' })
 
-const userRoutes = require('./src/routes/user')
-const postRoutes = require('./src/routes/post');
+const userRoutes = require('./routes/user')
+const postRoutes = require('./routes/post');
 
 const app = express();
 
@@ -51,17 +51,6 @@ app.post('/checkout-session', requireAuth, async (req, res) => {
 })
 
 
-// upload image
-// app.post('/user/upload', upload.single('image'), function (req, res) {
-//     console.log(req.file);
-//     console.log(req.body);
-//     // console.log(req.file);
-// })
-
-
-// app.get('/', function(req, res){
-//     res.send('hello');
-// })
 
 app.use('/api/user', userRoutes);
 app.use('/api/posts', postRoutes);
