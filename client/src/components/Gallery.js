@@ -52,7 +52,7 @@ function Gallery(props) {
       .then(res => res.json())
       .then(response => {
         const newData = data.map(posts => {
-          if (posts._id == response._id)
+          if (posts._id === response._id)
             return response;
           else
             return posts
@@ -79,7 +79,7 @@ function Gallery(props) {
       .then(res => res.json())
       .then(response => {
         const newData = data.map(posts => {
-          if (posts._id == response._id)
+          if (posts._id === response._id)
             return response;
           else
             return posts

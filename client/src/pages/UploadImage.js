@@ -26,17 +26,21 @@ function UploadImage() {
     formData.append('location', location);
     formData.append('image', image);
 
-    const response = await fetch('/api/posts', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Authorization': `Bearer ${user.token}`
-      },
-    })
-    const json = await response.json();
-    console.log(json);
-    if (json)
-      navigate(-1);
+    try {
+      const response = await fetch('/api/posts', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        },
+      })
+      const json = await response.json();
+      console.log(json);
+      if (json)
+        navigate(-1);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
