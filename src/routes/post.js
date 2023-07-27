@@ -55,13 +55,13 @@ router.post('/', requireAuth, upload.single('image'), async (req, res) => {
     const { description, tags, location, username } = req.body;
     const userDetails = await UserDetail.findOne({ username })
 
-    const tagsArr = tags.split(',');
+    const tagsArr = String(tags).split(',');
     tagsArr.forEach((ele, idx) => {
         tagsArr[idx] = ele.trim();
     });
 
     try {
-        const storageRef = fbStorage.ref(storage, `files/${req.file.filename + " " + Date()}`)
+        const storageRef = fbStorage.ref(storage, `files/${'image' + " " + new Date()}`)
 
         const metadata = {
             contentType: req.file.mimetype
@@ -96,7 +96,7 @@ router.post('/', requireAuth, upload.single('image'), async (req, res) => {
             downloadURL: downloadURL
         })
     } catch (error) {
-        res.status(400).json({ message: e.message })
+        res.status(400).json({ message: error.message })
     }
 })
 
@@ -168,7 +168,7 @@ router.get('/photos/:id', getPost, async (req, res) => {
 router.patch('/:id', requireAuth, getPost, async (req, res) => {
     const { description, tags, location } = req.body;
 
-    const tagsArr = tags.split(',');
+    const tagsArr = String(tags).split(',');
     tagsArr.forEach((ele, idx) => {
         tagsArr[idx] = ele.trim();
     });

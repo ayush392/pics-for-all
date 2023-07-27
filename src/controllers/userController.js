@@ -25,7 +25,7 @@ const signupUser = async function (req, res) {
     const { fName, lName, email, username, password } = req.body
     try {
         const user = await User.signup(fName, lName, email, username, password)
-        console.log(user, 28)
+        console.log(user.email, user.user.username, 28)
         //create token
         const token = createToken(user._id)
 

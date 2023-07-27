@@ -40,7 +40,7 @@ app.post('/checkout-session', requireAuth, async (req, res) => {
             }],
 
             // TODO: MODIIFY THESE LINKS
-            success_url: 'https://unsplash.com/',
+            success_url: 'https://picsforall.cyclic.app/',
             // cancel_url: 'https://www.google.com',
         })
         res.json({ url: session.url })
@@ -66,14 +66,14 @@ app.post('/checkout-session', requireAuth, async (req, res) => {
 app.use('/api/user', userRoutes);
 app.use('/api/posts', postRoutes);
 
-if (app.settings.env !== 'development') {
-    //Serving the frontend
-    app.use(express.static(path.join(__dirname, "./client/build")));
+// if (app.settings.env !== 'development') {
+//Serving the frontend
+app.use(express.static(path.join(__dirname, "./client/build")));
 
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, './client/build/index.html'));
-    });
-}
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './client/build/index.html'));
+});
+// }
 
 let port = process.env.PORT || 4000;
 app.listen(port, function () {
