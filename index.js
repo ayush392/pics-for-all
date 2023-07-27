@@ -1,15 +1,14 @@
 require("dotenv").config();
 const express = require('express');
-const dbConnect = require("./db/dbConnect");
+const dbConnect = require("./src/db/dbConnect");
 const path = require('path')
-const requireAuth = require('./middleware/requireAuth')
+const requireAuth = require('./src/middleware/requireAuth')
 
 // const multer = require('multer')
 // const upload = multer({ dest: 'uploads/' })
 
-const userRoutes = require('./routes/user')
-const workoutRoutes = require('./routes/workout');
-const postRoutes = require('./routes/post');
+const userRoutes = require('./src/routes/user')
+const postRoutes = require('./src/routes/post');
 
 const app = express();
 
@@ -18,11 +17,6 @@ dbConnect();
 
 // middleware
 app.use(express.json())
-// app.use(express.static('public'))
-// app.use('/photos', express.static('public'))
-// app.use('/user', express.static('public'))
-// app.use('/likes', express.static('public'))
-// app.use('/s/photos', express.static('public'))
 
 //Payment gateway integration
 
@@ -70,7 +64,18 @@ app.post('/checkout-session', requireAuth, async (req, res) => {
 // })
 
 app.use('/api/user', userRoutes);
-app.use('/api/workouts', workoutRoutes);
 app.use('/api/posts', postRoutes);
 
-app.listen(4000, () => console.log('server started in port 4000'));
+if (app.settings.env == 'production') {
+    //Serving the frontend
+    app.use(express.static(path.join(__dirname, "./client/build")));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, './client/build/index.html'));
+    });
+}
+
+let port = process.env.PORT || 4000;
+app.listen(port, function () {
+    console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
+});
