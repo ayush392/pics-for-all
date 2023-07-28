@@ -9,7 +9,7 @@ export const useSignup = () => {
     const signup = async function (fName, lName, email, username, password) {
         setIsLoading(true);
         setError(null);
-        const response = await fetch('/api/user/signup', {
+        const response = await fetch('https://picsforall-backend.onrender.com/api/user/signup', {
             method: 'POST',
             headers: { 'Content-type': 'application/json' },
             body: JSON.stringify({ fName, lName, email, username, password })
@@ -28,11 +28,11 @@ export const useSignup = () => {
             localStorage.setItem('user', JSON.stringify(json))
 
             // update authContext
-            dispatch({type: 'LOGIN', payload: json})
+            dispatch({ type: 'LOGIN', payload: json })
 
             setIsLoading(false);
         }
     }
 
-    return {signup, isLoading, error}
+    return { signup, isLoading, error }
 }

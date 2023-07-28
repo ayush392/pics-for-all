@@ -10,7 +10,7 @@ function UserProfile({ val }) {
   // const userUrl = `https://api.unsplash.com/users/${userName}/${val}?client_id=${clientKey}`;
 
   useEffect(() => {
-    fetch(`/api/user/${val}/${username}`)
+    fetch(`https://picsforall-backend.onrender.com/api/user/${val}/${username}`)
       .then(res => res.json())
       .then(response => {
         setUserInfo(response);

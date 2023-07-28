@@ -14,7 +14,7 @@ export const useLogin = () => {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch('/api/user/login', {
+        const response = await fetch('https://picsforall-backend.onrender.com/api/user/login', {
             method: 'POST',
             headers: { 'Content-type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -26,7 +26,7 @@ export const useLogin = () => {
         if (!response.ok) {
             setIsLoading(false);
             setError(json.error);
-            throw Error(json.error); 
+            throw Error(json.error);
         }
 
         if (response.ok) {
@@ -34,12 +34,12 @@ export const useLogin = () => {
             localStorage.setItem('user', JSON.stringify(json))
 
             // update authContext
-            dispatch({type: 'LOGIN', payload: json})
+            dispatch({ type: 'LOGIN', payload: json })
 
             setIsLoading(false);
             // navigate(1);
         }
     }
 
-    return {login, isLoading, error}
+    return { login, isLoading, error }
 }

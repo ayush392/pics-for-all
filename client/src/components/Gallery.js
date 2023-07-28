@@ -18,7 +18,7 @@ function Gallery(props) {
   const { data, setData } = props;
 
   function downloadImage(id, filename) {
-    fetch(`/api/posts/download/${id}`)
+    fetch(`https://picsforall-backend.onrender.com/api/posts/download/${id}`)
       .then(res => res.blob())
       .then(response => {
         FileDownload(response, filename);
@@ -41,7 +41,7 @@ function Gallery(props) {
       navigate('/login');
       return
     }
-    fetch('/api/posts/like', {
+    fetch('https://picsforall-backend.onrender.com/api/posts/like', {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
@@ -68,7 +68,7 @@ function Gallery(props) {
       navigate('/login');
       return
     }
-    fetch('/api/posts/unlike', {
+    fetch('https://picsforall-backend.onrender.com/api/posts/unlike', {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',

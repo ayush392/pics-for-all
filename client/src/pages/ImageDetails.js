@@ -10,7 +10,7 @@ function ImageDetails() {
     const [isLike, setIsLike] = useState(state ? state.isLike : false);
     const { id } = useParams();
     const navigate = useNavigate();
-    const url = `/api/posts/photos/${id}`;
+    const url = `https://picsforall-backend.onrender.com/api/posts/photos/${id}`;
     const [imgDetail, setImgDetail] = useState([]);
     const { user } = useAuthContext();
     const avatarUrl = "https://png.pngtree.com/png-clipart/20210520/ourmid/pngtree-small-eye-handsome-boys-colorless-character-avatar-png-image_3286527.jpg"
@@ -24,7 +24,7 @@ function ImageDetails() {
 
 
     function downloadImage(id, filename) {
-        fetch(`/api/posts/download/${id}`)
+        fetch(`https://picsforall-backend.onrender.com/api/posts/download/${id}`)
             .then(res => res.blob())
             .then(response => {
                 FileDownload(response, filename);
@@ -37,7 +37,7 @@ function ImageDetails() {
             navigate('/login');
             return
         }
-        fetch('/api/posts/like', {
+        fetch('https://picsforall-backend.onrender.com/api/posts/like', {
             method: 'PUT',
             headers: {
                 'Content-type': 'application/json',
@@ -57,7 +57,7 @@ function ImageDetails() {
             navigate('/login');
             return
         }
-        fetch('/api/posts/unlike', {
+        fetch('https://picsforall-backend.onrender.com/api/posts/unlike', {
             method: 'PUT',
             headers: {
                 'Content-type': 'application/json',
