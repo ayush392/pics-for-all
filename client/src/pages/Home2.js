@@ -13,7 +13,7 @@ function Home2() {
 
     useEffect(() => {
 
-        fetch('/api/posts', {
+        fetch('https://picsforall-backend.onrender.com/api/posts', {
             headers: {
                 'Authorization': `Bearer ${user.token}`
             }

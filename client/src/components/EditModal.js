@@ -4,14 +4,14 @@ import { useAuthContext } from '../hooks/useAuthContext';
 
 function EditModal() {
     const { state } = useLocation();
-    console.log(state);
+    // console.log(state);
     const [description, setDescription] = useState(state.description);
     const [tags, setTags] = useState(state.tags);
     const [location, setLocation] = useState(state.location);
     const { user } = useAuthContext();
     const id = state.id;
     const navigate = useNavigate();
-    console.log(id);
+    // console.log(id);
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -20,7 +20,7 @@ function EditModal() {
             return;
         }
         try {
-            const response = await fetch(`/api/posts/${id}`, {
+            const response = await fetch(`https://picsforall-backend.onrender.com/api/posts/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-type': 'application/json',
@@ -47,7 +47,7 @@ function EditModal() {
             return
         }
         try {
-            const response = await fetch(`/api/posts/${id}`, {
+            const response = await fetch(`https://picsforall-backend.onrender.com/api/posts/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${user.token}`

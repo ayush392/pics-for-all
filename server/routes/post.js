@@ -55,7 +55,7 @@ router.post('/', requireAuth, upload.single('image'), async (req, res) => {
     const { description, tags, location, username } = req.body;
     const userDetails = await UserDetail.findOne({ username })
 
-    const tagsArr = tags.split(',');
+    const tagsArr = String(tags).split(',');
     tagsArr.forEach((ele, idx) => {
         tagsArr[idx] = ele.trim();
     });
@@ -95,7 +95,7 @@ router.post('/', requireAuth, upload.single('image'), async (req, res) => {
             type: req.file.mimetype,
             downloadURL: downloadURL
         })
-    } catch (error) {
+    } catch (e) {
         res.status(400).json({ message: e.message })
     }
 })
@@ -168,12 +168,16 @@ router.get('/photos/:id', getPost, async (req, res) => {
 router.patch('/:id', requireAuth, getPost, async (req, res) => {
     const { description, tags, location } = req.body;
 
-    const tagsArr = tags.split(',');
+    const tagsArr = String(tags).split(',');
     tagsArr.forEach((ele, idx) => {
         tagsArr[idx] = ele.trim();
     });
 
-    // console.log(description, tags, location);
+    if (res.post.description === description && res.post.tags === tagsArr && res.post.location === location) {
+        res.status(200).json({ message: 'post updated' })
+        return
+    }
+
     res.post.description = description
     res.post.tags = tagsArr
     res.post.location = location
