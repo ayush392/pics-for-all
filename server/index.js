@@ -1,31 +1,24 @@
 require("dotenv").config();
 const express = require('express');
 const dbConnect = require("./db/dbConnect");
-const path = require('path')
+const cors = require('cors')
 const requireAuth = require('./middleware/requireAuth')
 
-// const multer = require('multer')
-// const upload = multer({ dest: 'uploads/' })
-
 const userRoutes = require('./routes/user')
-const workoutRoutes = require('./routes/workout');
 const postRoutes = require('./routes/post');
 
 const app = express();
 
 dbConnect();
 
-
 // middleware
+app.use(cors({ Credential: true }))
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 // app.use(express.static('public'))
-// app.use('/photos', express.static('public'))
-// app.use('/user', express.static('public'))
-// app.use('/likes', express.static('public'))
-// app.use('/s/photos', express.static('public'))
+
 
 //Payment gateway integration
-
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 
 app.post('/checkout-session', requireAuth, async (req, res) => {
@@ -57,20 +50,13 @@ app.post('/checkout-session', requireAuth, async (req, res) => {
 })
 
 
-// upload image
-// app.post('/user/upload', upload.single('image'), function (req, res) {
-//     console.log(req.file);
-//     console.log(req.body);
-//     // console.log(req.file);
-// })
-
-
-// app.get('/', function(req, res){
-//     res.send('hello');
-// })
-
 app.use('/api/user', userRoutes);
-app.use('/api/workouts', workoutRoutes);
 app.use('/api/posts', postRoutes);
 
-app.listen(4000, () => console.log('server started in port 4000'));
+let port = process.env.PORT;
+if (port == null || port == "") {
+    port = 4000;
+}
+app.listen(port, function () {
+    console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
+});
