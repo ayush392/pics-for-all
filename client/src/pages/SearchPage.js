@@ -5,7 +5,7 @@ import { clientKey } from '../ApiKey/keys';
 
 function SearchPage() {
   const { query } = useParams();
-  const url = `https://picsforall-backend.onrender.com/api/posts/search/${query}`;
+  const url = `http://localhost:4000/api/posts/search/${query}`;
   const [data, setData] = useState([]);
 
 

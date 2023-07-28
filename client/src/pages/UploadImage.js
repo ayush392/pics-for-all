@@ -27,7 +27,7 @@ function UploadImage() {
     formData.append('image', image);
 
     try {
-      const response = await fetch('https://picsforall-backend.onrender.com/api/posts', {
+      const response = await fetch('http://localhost:4000/api/posts', {
         method: 'POST',
         body: formData,
         headers: {

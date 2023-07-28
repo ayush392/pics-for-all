@@ -20,7 +20,7 @@ function EditModal() {
             return;
         }
         try {
-            const response = await fetch(`https://picsforall-backend.onrender.com/api/posts/${id}`, {
+            const response = await fetch(`http://localhost:4000/api/posts/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-type': 'application/json',
@@ -47,7 +47,7 @@ function EditModal() {
             return
         }
         try {
-            const response = await fetch(`https://picsforall-backend.onrender.com/api/posts/${id}`, {
+            const response = await fetch(`http://localhost:4000/api/posts/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${user.token}`

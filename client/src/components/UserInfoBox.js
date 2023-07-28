@@ -5,7 +5,7 @@ import Avatar from './Avatar';
 
 function UserInfoBox() {
   const { username } = useParams();
-  const userUrl = `https://picsforall-backend.onrender.com/api/user/info/${username}`;
+  const userUrl = `http://localhost:4000/api/user/info/${username}`;
 
   const [userInfo, setUserInfo] = useState([]);
 

@@ -7,7 +7,7 @@ import { useAuthContext } from '../hooks/useAuthContext'
 // "proxy": "http://localhost:4000",
 function Home() {
   const [data, setData] = useState([]);
-  const url = 'https://picsforall-backend.onrender.com/api/posts';
+  const url = 'http://localhost:4000/api/posts';
   const navigate = useNavigate();
   const { user } = useAuthContext();
 
