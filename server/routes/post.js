@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const Post = require('../models/postModel');
-const { UserDetail } = require('../models/userModel')
-const path = require('path')
-const requireAuth = require('../middleware/requireAuth')
-
 const multer = require('multer')
 const firebase = require("firebase/app");
 const fbStorage = require("firebase/storage");
+
+const Post = require('../models/postModel');
+const { UserDetail } = require('../models/userModel')
+const requireAuth = require('../middleware/requireAuth')
+
 
 // GET all images
 router.get('/', async (req, res) => {
@@ -100,44 +100,8 @@ router.post('/', requireAuth, upload.single('image'), async (req, res) => {
     }
 })
 
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, 'public')
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname))
-//     }
-// })
-
-// const upload = multer({ storage: storage })
-
-// router.post('/', requireAuth, upload.single('image'), async (req, res) => {
-//     const { description, tags, location, username } = req.body;
-//     const userDetails = await UserDetail.findOne({ username })
-
-//     const tagsArr = tags.split(',');
-//     tagsArr.forEach((ele, idx) => {
-//         tagsArr[idx] = ele.trim();
-//     });
-
-//     const savePost = new Post({
-//         description: description,
-//         tags: tagsArr,
-//         location: location,
-//         image: req.file.filename,
-//         user: userDetails,
-//     })
-
-//     try {
-//         const response = await savePost.save()
-//         res.status(201).json(response)
-//     } catch (e) {
-//         res.status(400).json({ message: e.message })
-//     }
-// })
 
 // middleware
-
 async function getPost(req, res, next) {
     let post;
     try {

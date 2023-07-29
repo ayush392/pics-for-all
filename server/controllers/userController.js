@@ -1,4 +1,6 @@
 const { User } = require('../models/userModel')
+const Post = require('../models/postModel');
+const { UserDetail } = require('../models/userModel')
 const jwt = require('jsonwebtoken')
 
 const createToken = function (_id) {
@@ -36,4 +38,38 @@ const signupUser = async function (req, res) {
     }
 }
 
-module.exports = { loginUser, signupUser };
+const postsOfUser = async function (req, res) {
+    const username = req.params.username
+    try {
+        const post = await Post.find({ 'user.username': username })
+        // console.log(post, 'posts-19');
+        res.json(post)
+    } catch (e) {
+        res.status(500).json({ message: e.message })
+    }
+}
+
+const likedPosts = async function (req, res) {
+    const username = req.params.username
+    try {
+        const post = await Post.find({ liked_by: username })
+        // console.log(post, 'likes-30');
+        res.json(post)
+    } catch (e) {
+        res.status(500).json({ message: e.message })
+    }
+}
+
+const userInfo = async function (req, res) {
+    const username = req.params.username
+    // console.log(username, 28);
+    try {
+        const post = await UserDetail.find({ username: username })
+        // console.log(post);
+        res.json(post)
+    } catch (e) {
+        res.status(500).json({ message: e.message })
+    }
+}
+
+module.exports = { loginUser, signupUser, postsOfUser, likedPosts, userInfo };
