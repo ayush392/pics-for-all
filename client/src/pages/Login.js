@@ -12,37 +12,54 @@ function Login() {
         e.preventDefault();
         try {
             await login(email, password)
-            navigate(-1, { replace: true })
-        } catch (error) {
-            console.log(error);
+            { !error && navigate(-1, { replace: true }) }
+        } catch (e) {
+            console.log(e);
         }
     }
 
     return (
-
-        <form className='login' onSubmit={handleSubmit}>
-            <h3>Login</h3>
-
-            <label>Email:</label>
-            <input
-                type='email'
-                onChange={e => setEmail(e.target.value)}
-                value={email}
-            />
-
-            <label>Password:</label>
-            <input
-                type='password'
-                onChange={e => setPassword(e.target.value)}
-                value={password}
-            />
-
-            <button className='btn btn-dark' disabled={isLoading}>Login</button>
-
-            {error && <div className='error'>{error}</div>}
-            <p className="dark">Don't have an account? <a href='/signup'>Sign Up</a></p>
-
-        </form>
+        <div className="container">
+            <h1 className='m-4 text-center'>Login</h1>
+            <form className='login' onSubmit={handleSubmit}>
+                <div className="mb-3">
+                    <label className="form-label">Email</label>
+                    <input type="email"
+                        onChange={e => setEmail(e.target.value)}
+                        value={email}
+                        className="form-control" />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Password</label>
+                    <input
+                        type='password'
+                        onChange={e => setPassword(e.target.value)}
+                        value={password}
+                        className="form-control" />
+                </div>
+                <div className="mb-3">
+                    {error && <div className='text-danger mb-3'><b>{error}</b></div>}
+                </div>
+                <div className="mb-3">
+                    <button type='submit' className='btn btn-dark w-100' disabled={isLoading}>Login</button>
+                </div>
+                <div className="mb-3">
+                    <button type='submit' onClick={() => {
+                        setEmail('test1@user.com');
+                        setPassword('ABCabc123!');
+                    }}
+                        className='btn btn-outline-dark w-100'
+                        disabled={isLoading}>
+                        Login as a Test User
+                    </button>
+                </div>
+            </form>
+            <div className="mb-3 text-center">
+                <p>Don't have an account?
+                    <span className='text-primary' onClick={() => navigate('/signup', { replace: true })}>Join</span>
+                </p>
+            </div>
+        </div>
     )
 }
 

@@ -19,6 +19,11 @@ function UploadImage() {
       return
     }
 
+    if (!description || !tags || !image) {
+      alert('All fields must be filled')
+      return;
+    }
+
     let formData = new FormData();
     formData.append('username', user.username);
     formData.append('description', description);
@@ -34,10 +39,8 @@ function UploadImage() {
           'Authorization': `Bearer ${user.token}`
         },
       })
-      const json = await response.json();
-      console.log(json);
-      if (json)
-        navigate(-1);
+        // const json = await response.json();
+        (response?.ok) ? navigate(-1) : alert('Something went wrong. Please try again')
     } catch (error) {
       console.log(error);
     }
@@ -45,12 +48,11 @@ function UploadImage() {
 
   return (
     <>
-      <div className="container m-10">
-        <h1>Submit a photo</h1>
-        <br />
+      <div className="container">
+        <h1 className='m-4 text-center'>Submit a photo</h1>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="mb-3">
-            <label className="form-label">Default file input example</label>
+            <label className="form-label">Upload an image</label>
             <input
               className="form-control"
               onChange={e => setImage(e.target.files[0])}
@@ -64,10 +66,13 @@ function UploadImage() {
               onChange={e => setDescription(e.target.value)}
               className="form-control"
               rows="3"
+              placeholder='Short description of an image'
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Tags</label>
+            <label className="form-label">Tags
+              <small className='text-secondary'> (separated by comma)</small>
+            </label>
             <input
               value={tags}
               onChange={e => setTags(e.target.value)}
@@ -84,8 +89,9 @@ function UploadImage() {
               className="form-control"
             />
           </div>
-
-          <button type="submit" className="btn btn-primary">Submit</button>
+          <div className="mb-3 mt-4">
+            <button type='submit' className='btn btn-dark w-100'>Submit</button>
+          </div>
         </form>
       </div>
     </>
