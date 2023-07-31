@@ -23,25 +23,12 @@
     position: relative;
 }
 
-.overlay {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.30) 0%, rgba(148, 148, 148, 0.30) 50%, rgba(0, 0, 0, 0.30) 100%);
-    z-index: -2;
-    cursor: zoom-in;
-}
 
 img.a {
     width: 100%;
 }
 
-.like-btn {
-    position: absolute;
-    top: 18px;
-    right: 18px;
-    z-index: -1;
-}
+
 
 .red {
     /* background-color: white; */
@@ -92,9 +79,7 @@ button {
     z-index: -1;
 }
 
-.profile {
-    cursor: pointer;
-}
+
 
 .profile-img {
     border-radius: 50%;
@@ -119,14 +104,15 @@ button {
 
 /* Hover effects */
 
-.pos:hover .hidden,
+.pos:hover .download-btn,
+.pos:hover .profile,
 .pos:hover .like-btn,
 .pos:hover .edit-btn {
     z-index: 5;
 }
 
 .pos:hover .overlay {
-    z-index: 1;
+    z-index: 2;
 }
 
 .profile:hover {
@@ -139,9 +125,47 @@ button {
     color: #000;
 }
 
+@media only screen and (min-width: 900px) {
 
-/* .box img{
-    width: 100%;
-    height: 170px;
-    object-fit: contain;
-} */
+    .overlay,
+    .like-btn,
+    .edit-btn,
+    .download-btn,
+    .profile {
+        position: absolute;
+        z-index: -1;
+    }
+
+    .overlay {
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.30) 0%, rgba(148, 148, 148, 0.30) 50%, rgba(0, 0, 0, 0.30) 100%);
+        cursor: zoom-in;
+    }
+
+    .like-btn {
+        top: 18px;
+        right: 18px;
+    }
+
+    .edit-btn {
+        top: 18px;
+        left: 10px;
+    }
+
+    .download-btn {
+        bottom: 18px;
+        right: 18px;
+    }
+
+    .profile {
+        cursor: pointer;
+        bottom: 18px;
+        left: 18px;
+    }
+
+    .card-header,
+    .card-body {
+        padding: 0 !important;
+    }
+}
