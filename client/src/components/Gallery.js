@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
 import { useNavigate } from 'react-router-dom'
 import './gallery.css';
 import FileDownload from 'js-file-download';
 import Avatar from './Avatar';
 import { useAuthContext } from '../hooks/useAuthContext';
-
-
-// import Popover from './LoginModal';
 
 
 function Gallery(props) {
@@ -26,16 +23,6 @@ function Gallery(props) {
       .catch(e => console.log(e));
   }
 
-  function handleHover(e) {
-    // console.log(e.target);
-    // const {name} = e.target.name;
-    // const url = `https://api.unsplash.com/users/${name}/?client_id=${clientKey}`;  
-    // fetch(url)
-    //   .then(res=>res.json())
-    //   .then(response => setImages(response))
-    //   .catch(e => console.log(e));
-  }
-
   function likePost(postId, username) {
     if (!user) {
       navigate('/login');
@@ -52,7 +39,7 @@ function Gallery(props) {
       .then(res => res.json())
       .then(response => {
         const newData = data.map(posts => {
-          if (posts._id == response._id)
+          if (posts._id === response._id)
             return response;
           else
             return posts
@@ -79,7 +66,7 @@ function Gallery(props) {
       .then(res => res.json())
       .then(response => {
         const newData = data.map(posts => {
-          if (posts._id == response._id)
+          if (posts._id === response._id)
             return response;
           else
             return posts
@@ -93,69 +80,66 @@ function Gallery(props) {
 
   return (
     <>
-      {/* {data[1] && <div className="popoverr">
-        <div className='r'>
-          <div className="one">
-            <img src={data[1].user.profile_image.medium} alt="" />
-          </div>
-          <div className='two'>
-            <h3 className='c' >{data[1].user.name}</h3>
-            <p className='c' >{data[1].user.username}</p>
-          </div>
-        </div>
-        <button type="button" class="btn btn-sm btn-outline-secondary">View Profile</button>
-      </div>} */}
-
-
-      <div className='card-container'>
+      <div className='container'>
         <ResponsiveMasonry
           columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}
         >
           <Masonry gutter={"1.5rem"}>
             {
               data && data.map(x => {
-                return <div className='pos' key={x._id}>
-                  <div className='overlay' onClick={() => navigate(`/photos/${x._id}`, {
-                    state: {
-                      isLike: (x.liked_by.includes(x.user.username))
-                    }
-                  })}></div>
+                return <div className='pos position-relative'>
+                  <div className="card border border-0">
+                    <div className='overlay' onClick={() => navigate(`/photos/${x._id}`, {
+                      state: {
+                        isLike: (x.liked_by.includes(x.user.username))
+                      }
+                    })}></div>
+                    <div className="card-header bg-transparent p-2">
 
-                  <img className='a' src={x.image} alt='xyz' />
+                      <div className='profile' name={x.user.username} onClick={() => navigate(`../user/${x.user.username}`)}>
+                        <Avatar w='25px' ch={x.user.fName[0]} str={x.user.username} />
+                        <span className='ms-2' >{x.user.fName + " " + x.user.lName}</span>
+                      </div>
 
-                  {user && (user.username === x.user.username) && <button className='edit-btn' onClick={() => navigate('/edit', {
-                    state: {
-                      id: x._id,
-                      description: x.description,
-                      tags: x.tags,
-                      location: x.location
-                    }
-                  })}>
-                    Edit 🖋
-                  </button>}
-
-                  {user && x.liked_by.includes(user.username)
-                    ?
-                    <button className='like-btn red' onClick={() => user ? unlikePost(x._id, user.username) : navigate('/login')} > ❤ </button>
-                    :
-                    <button className='like-btn' onClick={() => user ? likePost(x._id, user.username) : navigate('/login')} > ❤ </button>
-                  }
-
-
-                  <div className='flex-container hidden'>
-
-                    <div className='profile' name={x.user.username} onMouseOver={handleHover} onClick={() => navigate(`../user/${x.user.username}`)}>
-                      <Avatar w='25px' ch={x.user.fName[0]} str={x.user.username} />
-                      <span className='ms-2 profile-name' >{x.user.fName + " " + x.user.lName}</span>
                     </div>
-                    <button className='download-btn' onClick={() => downloadImage(x._id, x.user.fName + '-' + x._id + '.jpg')}>Download</button>
+
+                    <img className='card-img-top d-block' src={x.image} alt='...' onClick={() => navigate(`/photos/${x._id}`, {
+                      state: {
+                        isLike: (x.liked_by.includes(x.user.username))
+                      }
+                    })} />
+
+                    <div className="card-body p-2">
+                      <div className="d-flex justify-content-between">
+                        <div>
+                          {user && x.liked_by.includes(user.username)
+                            ?
+                            <button className='btn btn-danger btn-sm like-btn' onClick={() => user ? unlikePost(x._id, user.username) : navigate('/login')} > ❤ </button>
+                            :
+                            <button className='btn btn-outline-danger btn-sm like-btn' onClick={() => user ? likePost(x._id, user.username) : navigate('/login')} > ❤ </button>
+                          }
+
+                          {user && (user.username === x.user.username) && <button className='btn btn-outline-dark btn-sm edit-btn ms-2' onClick={() => navigate('/edit', {
+                            state: {
+                              id: x._id,
+                              description: x.description,
+                              tags: x.tags,
+                              location: x.location
+                            }
+                          })}>
+                            Edit 🖋
+                          </button>}
+                        </div>
+                        <button className="btn btn-dark btn-sm download-btn" onClick={() => downloadImage(x._id, x.user.fName + '-' + x._id + '.jpg')}>Download</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               })
             }
           </Masonry>
         </ResponsiveMasonry>
-      </div>
+      </div >
     </>
   )
 }
