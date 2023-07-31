@@ -38,11 +38,16 @@ function UploadImage() {
         headers: {
           'Authorization': `Bearer ${user.token}`
         },
-      })
-        // const json = await response.json();
-        (response?.ok) ? navigate(-1) : alert('Something went wrong. Please try again')
+      });
+
+      // const json = await response.json();
+      if (!response.ok)
+        throw new Error('Something went wrong. Please try again');
+      else
+        navigate(-1, { replace: true })
+      // (json) ? navigate(-1) : alert('Something went wrong. Please try again')
     } catch (error) {
-      console.log(error);
+      alert(error.message);
     }
   }
 
