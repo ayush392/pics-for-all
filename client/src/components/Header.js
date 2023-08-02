@@ -59,7 +59,16 @@ function Header() {
                 </div>
             }
           </div>
-
+          {/* <button type="button" className="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Download free
+          </button>
+          <ul className="dropdown-menu">
+            <li><button className="dropdown-item">Small</button></li>
+            <li><button className="dropdown-item"  >Medium</button></li>
+            <li><button className="dropdown-item" >Large</button></li>
+            <li><hr className="dropdown-divider" /></li>
+            <li><button className="dropdown-item">Original Size</button></li>
+          </ul> */}
         </div>
       </nav>
 

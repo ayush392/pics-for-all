@@ -18,8 +18,8 @@ function Signup() {
         // console.log(email, password)
         try {
             await signup(fName, lName, email, username, password);
-            { !error && navigate('/', { replace: true }) }
-            // 
+            !error && navigate('/', { replace: true })
+
         } catch (e) {
             console.log(e);
         }

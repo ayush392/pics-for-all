@@ -19,11 +19,6 @@
     margin: 0 auto;
 }
 
-.pos {
-    position: relative;
-}
-
-
 img.a {
     width: 100%;
 }
@@ -35,30 +30,7 @@ img.a {
     color: red;
 }
 
-.edit-btn {
-    position: absolute;
-    top: 18px;
-    left: 18px;
-    z-index: -1;
-}
 
-button {
-    border: none;
-    border-radius: 5px;
-}
-
-.box {
-    width: 50%;
-    margin: 0 auto;
-    justify-content: space-between;
-}
-
-.inner-box {
-    display: flex;
-    justify-content: space-between;
-    max-width: 85%;
-    padding: 56px 20px 72px 20px;
-}
 
 .underline {
     border-bottom: 2px solid #d0d0d0;
@@ -72,19 +44,6 @@ button {
     padding: 16px 18px;
 }
 
-.hidden {
-    position: absolute;
-    bottom: 0;
-    color: #d0d0d0;
-    z-index: -1;
-}
-
-
-
-.profile-img {
-    border-radius: 50%;
-    margin-right: 0.5rem;
-}
 
 .tags {
     background-color: #eee;
@@ -97,7 +56,7 @@ button {
 
 .img-det {
     max-height: 80vh;
-    max-width: 100vw;
+    max-width: 100%;
     display: block;
     margin: 0 auto;
 }
@@ -167,5 +126,9 @@ button {
     .card-header,
     .card-body {
         padding: 0 !important;
+    }
+
+    .banner {
+        max-height: 84vh;
     }
 }

@@ -12,7 +12,7 @@ function Login() {
         e.preventDefault();
         try {
             await login(email, password)
-            { !error && navigate(-1, { replace: true }) }
+            !error && navigate(-1, { replace: true })
         } catch (e) {
             console.log(e);
         }

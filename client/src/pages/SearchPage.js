@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Gallery from '../components/Gallery'
-import { clientKey } from '../ApiKey/keys';
+const baseUrl = (process.env.NODE_ENV === 'development') ? 'http://localhost:4000' : 'https://picsforall-backend.onrender.com';
 
 function SearchPage() {
   const { query } = useParams();
-  const url = `http://localhost:4000/api/posts/search/${query}`;
+  const url = `${baseUrl}/api/posts/search/${query}`;
   const [data, setData] = useState([]);
 
 

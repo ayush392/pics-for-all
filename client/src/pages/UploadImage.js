@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../hooks/useAuthContext';
+const baseUrl = (process.env.NODE_ENV === 'development') ? 'http://localhost:4000' : 'https://picsforall-backend.onrender.com';
 
 function UploadImage() {
   const [image, setImage] = useState('');
@@ -32,7 +33,7 @@ function UploadImage() {
     formData.append('image', image);
 
     try {
-      const response = await fetch('http://localhost:4000/api/posts', {
+      const response = await fetch(`${baseUrl}/api/posts`, {
         method: 'POST',
         body: formData,
         headers: {

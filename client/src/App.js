@@ -1,6 +1,5 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
-import Topics from './pages/Topics';
 import SearchPage from './pages/SearchPage';
 import ImageDetails from './pages/ImageDetails';
 import UserProfile from './pages/UserProfile';
@@ -29,7 +28,6 @@ function App() {
 
         <Route path='/' element={<SharedLayout />} >
           <Route index element={<Home />} />
-          <Route path='t/:slugId' element={<Topics />} />
           <Route path='s/photos/:query' element={<SearchPage />} />
           <Route path='photos/:id' element={<ImageDetails />} />
           <Route path='plus' element={<Plus />} />

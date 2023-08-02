@@ -4,6 +4,7 @@ import FileDownload from 'js-file-download';
 // import Error from './Error';
 import { useAuthContext } from '../hooks/useAuthContext';
 import Avatar from '../components/Avatar';
+const baseUrl = (process.env.NODE_ENV === 'development') ? 'http://localhost:4000' : 'https://picsforall-backend.onrender.com';
 
 
 function ImageDetails() {
@@ -11,10 +12,9 @@ function ImageDetails() {
     const [isLike, setIsLike] = useState(state ? state.isLike : false);
     const { id } = useParams();
     const navigate = useNavigate();
-    const url = `http://localhost:4000/api/posts/photos/${id}`;
+    const url = `${baseUrl}/api/posts/photos/${id}`;
     const [imgDetail, setImgDetail] = useState([]);
     const { user } = useAuthContext();
-    const avatarUrl = "https://png.pngtree.com/png-clipart/20210520/ourmid/pngtree-small-eye-handsome-boys-colorless-character-avatar-png-image_3286527.jpg"
 
     useEffect(() => {
         fetch(url)
@@ -25,7 +25,7 @@ function ImageDetails() {
 
 
     function downloadImage(id, filename) {
-        fetch(`http://localhost:4000/api/posts/download/${id}`)
+        fetch(`${baseUrl}/api/posts/download/${id}`)
             .then(res => res.blob())
             .then(response => {
                 FileDownload(response, filename);
@@ -38,7 +38,7 @@ function ImageDetails() {
             navigate('/login');
             return
         }
-        fetch('http://localhost:4000/api/posts/like', {
+        fetch(`${baseUrl}/api/posts/like`, {
             method: 'PUT',
             headers: {
                 'Content-type': 'application/json',
@@ -58,7 +58,7 @@ function ImageDetails() {
             navigate('/login');
             return
         }
-        fetch('http://localhost:4000/api/posts/unlike', {
+        fetch(`${baseUrl}/api/posts/unlike`, {
             method: 'PUT',
             headers: {
                 'Content-type': 'application/json',

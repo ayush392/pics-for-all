@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Gallery from '../components/Gallery';
-import Navbar from '../components/Navbar';
 // import Header from '../components/Header';
 import { useAuthContext } from '../hooks/useAuthContext'
 // "proxy": "http://localhost:4000",
+const baseUrl = (process.env.NODE_ENV === 'development') ? 'http://localhost:4000' : 'https://picsforall-backend.onrender.com';
+
 function Home() {
   const [data, setData] = useState([]);
-  const url = 'http://localhost:4000/api/posts';
+  const url = `${baseUrl}/api/posts`;
+  console.log(url);
   const navigate = useNavigate();
   const { user } = useAuthContext();
 
@@ -23,8 +25,8 @@ function Home() {
 
   return (
     <div>
-      <Navbar />
-      {/* {console.log(data)} */}
+      <img src={'./banner.jpg'} className="d-block object-fit-cover w-100 banner" alt="..." />
+      <br />
       {data && <Gallery data={data} setData={setData} />}
     </div>
   )

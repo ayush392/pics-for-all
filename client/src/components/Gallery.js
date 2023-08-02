@@ -5,6 +5,7 @@ import './gallery.css';
 import FileDownload from 'js-file-download';
 import Avatar from './Avatar';
 import { useAuthContext } from '../hooks/useAuthContext';
+const baseUrl = (process.env.NODE_ENV === 'development') ? 'http://localhost:4000' : 'https://picsforall-backend.onrender.com';
 
 
 function Gallery(props) {
@@ -15,7 +16,7 @@ function Gallery(props) {
   const { data, setData } = props;
 
   function downloadImage(id, filename) {
-    fetch(`http://localhost:4000/api/posts/download/${id}`)
+    fetch(`${baseUrl}/api/posts/download/${id}`)
       .then(res => res.blob())
       .then(response => {
         FileDownload(response, filename);
@@ -28,7 +29,7 @@ function Gallery(props) {
       navigate('/login');
       return
     }
-    fetch('http://localhost:4000/api/posts/like', {
+    fetch(`${baseUrl}/api/posts/like`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
@@ -55,7 +56,7 @@ function Gallery(props) {
       navigate('/login');
       return
     }
-    fetch('http://localhost:4000/api/posts/unlike', {
+    fetch(`${baseUrl}/api/posts/unlike`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',

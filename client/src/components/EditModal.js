@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
+const baseUrl = (process.env.NODE_ENV === 'development') ? 'http://localhost:4000' : 'https://picsforall-backend.onrender.com';
 
 function EditModal() {
     const { state } = useLocation();
@@ -20,7 +21,7 @@ function EditModal() {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:4000/api/posts/${id}`, {
+            const response = await fetch(`${baseUrl}/api/posts/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-type': 'application/json',
@@ -28,8 +29,8 @@ function EditModal() {
                 },
                 body: JSON.stringify({ description, tags, location })
             })
-            const json = await response.json();
-            console.log(response);
+            // const json = await response.json();
+            // console.log(response);
             if (response.ok) {
                 navigate(-1);
             }
@@ -47,7 +48,7 @@ function EditModal() {
             return
         }
         try {
-            const response = await fetch(`http://localhost:4000/api/posts/${id}`, {
+            const response = await fetch(`${baseUrl}/api/posts/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${user.token}`

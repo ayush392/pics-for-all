@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, NavLink } from 'react-router-dom'
 import Gallery from '../components/Gallery';
 import UserInfoBox from '../components/UserInfoBox';
-import { clientKey } from '../ApiKey/keys';
+const baseUrl = (process.env.NODE_ENV === 'development') ? 'http://localhost:4000' : 'https://picsforall-backend.onrender.com';
 
 function UserProfile({ val }) {
   const { username } = useParams();
@@ -10,7 +10,7 @@ function UserProfile({ val }) {
   // const userUrl = `https://api.unsplash.com/users/${userName}/${val}?client_id=${clientKey}`;
 
   useEffect(() => {
-    fetch(`http://localhost:4000/api/user/${val}/${username}`)
+    fetch(`${baseUrl}/api/user/${val}/${username}`)
       .then(res => res.json())
       .then(response => {
         setUserInfo(response);
