@@ -56,7 +56,7 @@ function Login() {
             </form>
             <div className="mb-3 text-center">
                 <p>Don't have an account?
-                    <span className='text-primary' onClick={() => navigate('/signup', { replace: true })}>Join</span>
+                    <span className='link-primary' role='button' onClick={() => navigate('/signup', { replace: true })}>Join</span>
                 </p>
             </div>
         </div>

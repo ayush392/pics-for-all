@@ -18,8 +18,7 @@ function Signup() {
         // console.log(email, password)
         try {
             await signup(fName, lName, email, username, password);
-            !error && navigate('/', { replace: true })
-
+            navigate('/', { replace: true })
         } catch (e) {
             console.log(e);
         }
@@ -30,7 +29,7 @@ function Signup() {
             <h1 className='m-4 text-center'>Join PicsForAll</h1>
             <div className="mt-3 mb-3 text-center">
                 <p>Already have an account?
-                    <span className='text-primary' onClick={() => navigate('/login', { replace: true })}>Login</span>
+                    <span className='link-primary' role='button' onClick={() => navigate('/login', { replace: true })}> Login</span>
                 </p>
             </div>
             <br />

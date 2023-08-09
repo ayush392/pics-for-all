@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { useLogout } from '../hooks/useLogout'
 import { useAuthContext } from '../hooks/useAuthContext';
-// import './App.css';
+import './gallery.css';
+import Avatar from './Avatar';
 
 function Header() {
   const { logout } = useLogout();
@@ -25,63 +26,115 @@ function Header() {
 
   return (
     <>
-      <nav className="navbar bg-body-tertiary">
-        <div className="container-fluid">
+      <nav className="navbar align-items-center mobile">
+        <Link to={'/'} className="navbar-brand ms-2 ps-1">
+          PFA
+        </Link>
 
-          <h1><Link to={'/'} className="navbar-brand">PicsForAll</Link></h1>
-
-          <button type="button" onClick={() => navigate('/plus')} className="btn btn-outline-info">PicsForAll+</button>
-
-          <form onSubmit={e => e.preventDefault()} className="d-flex" role="search">
+        <form onSubmit={e => e.preventDefault()} className='w-50' role="search">
+          <div className="input-group">
             <input
-              className="form-control me-2"
+              className="form-control"
               type="search"
               value={query}
               onChange={handleChange}
               placeholder="Search images"
               aria-label="Search"
+              aria-describedby="mobile-search-btn"
             />
-            <button onClick={handleSearch} className="btn btn-primary" type="submit">Search</button>
-          </form>
-
-          <button type="button" onClick={handleClick} className="btn btn-outline-success">Submit a photo</button>
-
-          <div>
-            {
-              user ? <div>
-                <span className='me-2'>{user.email}</span>
-                <button className='btn btn-outline-danger' onClick={() => logout()}>Log Out</button>
-              </div>
-                :
-                <div>
-                  <Link className='me-2 btn btn-outline-primary' to={'/login'}>Login</Link>
-                  <Link className='btn btn-outline-primary' to={'/signup'}>Signup</Link>
-                </div>
-            }
+            <button
+              onClick={handleSearch}
+              className="btn btn-outline-secondary btn-sm"
+              type="submit"
+              id="mobile-search-btn"
+            >
+              🔍
+            </button>
           </div>
-          {/* <button type="button" className="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Download free
-          </button>
-          <ul className="dropdown-menu">
-            <li><button className="dropdown-item">Small</button></li>
-            <li><button className="dropdown-item"  >Medium</button></li>
-            <li><button className="dropdown-item" >Large</button></li>
-            <li><hr className="dropdown-divider" /></li>
-            <li><button className="dropdown-item">Original Size</button></li>
-          </ul> */}
-        </div>
-      </nav>
-
-      {/* <div>
-        <h2 onClick={() => navigate('/')}>PicsForALL</h2>
-        <form onClick={e => e.preventDefault()}>
-          <input value={query} onChange={handleChange} />
-          <button onClick={() => console.log(query)}>Search</button>
-          <Link to={`/s/photos/${query}`}>Search</Link>
         </form>
-        <hr></hr>
-      </div> */}
 
+        <div className=' me-2 pe-1'>
+          {
+            user
+              ?
+              <div className="btn-group">
+                <span
+                  role='button'
+                  data-bs-toggle="dropdown"
+                  data-bs-display="static"
+                  aria-expanded="false"
+                >
+                  <Avatar w='2.125rem' ch={user?.username[0]} str={user?.username} />
+                </span>
+                <ul className="dropdown-menu dropdown-menu-start" style={{ translate: '-80%' }}>
+                  <li><Link to={`../user/${user?.username}`} className="dropdown-item">View Profile</Link></li>
+                  <li><button onClick={handleClick} className="dropdown-item">Submit a photo</button></li>
+                  <li><Link to={'/plus'} className="dropdown-item text-info">Picsforall+</Link></li>
+                  <li><hr className="dropdown-divider" /></li>
+                  <li><button className='dropdown-item' onClick={() => logout()}>Logout @{user?.username}</button></li>
+                </ul>
+              </div>
+              :
+              <Link className='btn btn-outline-dark' to={'/login'}>Login</Link>
+          }
+        </div>
+      </nav >
+
+
+      <nav className="navbar align-items-center desktop">
+        <Link to={'/'} className="navbar-brand ms-3">
+          PicsForAll
+        </Link>
+
+        <form onSubmit={e => e.preventDefault()} className='w-50' role="search">
+          <div className="input-group">
+            <input
+              className="form-control"
+              type="search"
+              value={query}
+              onChange={handleChange}
+              placeholder="Search images"
+              aria-label="Search"
+              aria-describedby="desktop-search-btn"
+            />
+            <button
+              onClick={handleSearch}
+              className="btn btn-dark"
+              type="submit"
+              id="desktop-search-btn"
+            >
+              Search
+            </button>
+          </div>
+        </form>
+        <button type="button" onClick={() => navigate('/plus')} className="btn btn-outline-info">PicsForAll+</button>
+        <button type="button" onClick={handleClick} className="btn btn-outline-dark">Submit a photo</button>
+        <div className=' me-3'>
+          {
+            user
+              ?
+              <div className="btn-group">
+                <span
+                  role='button'
+                  data-bs-toggle="dropdown"
+                  data-bs-display="static"
+                  aria-expanded="false"
+                >
+                  <Avatar w='2.125rem' ch={user?.username[0]} str={user?.username} />
+                </span>
+                <ul className="dropdown-menu dropdown-menu-start" style={{ translate: '-80%' }}>
+                  <li><Link to={`../user/${user?.username}`} className="dropdown-item">View Profile</Link></li>
+                  <li><button onClick={handleClick} className="dropdown-item">Submit a photo</button></li>
+                  <li><Link to={'/plus'} className="dropdown-item text-info">Picsforall+</Link></li>
+                  <li><hr className="dropdown-divider" /></li>
+                  <li><button className='dropdown-item' onClick={() => logout()}>Logout @{user?.username}</button></li>
+                </ul>
+              </div>
+              :
+              <Link className='btn btn-outline-dark' to={'/login'}>Login</Link>
+          }
+        </div>
+      </nav >
     </>
   )
 }
