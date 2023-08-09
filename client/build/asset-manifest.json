@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "https://picsforall.netlify.app/static/css/main.7aebf385.css",
-    "main.js": "https://picsforall.netlify.app/static/js/main.ad367059.js",
+    "main.css": "https://picsforall.netlify.app/static/css/main.ce1d02fd.css",
+    "main.js": "https://picsforall.netlify.app/static/js/main.c30e2eb0.js",
     "index.html": "https://picsforall.netlify.app/index.html",
-    "main.7aebf385.css.map": "https://picsforall.netlify.app/static/css/main.7aebf385.css.map",
-    "main.ad367059.js.map": "https://picsforall.netlify.app/static/js/main.ad367059.js.map"
+    "main.ce1d02fd.css.map": "https://picsforall.netlify.app/static/css/main.ce1d02fd.css.map",
+    "main.c30e2eb0.js.map": "https://picsforall.netlify.app/static/js/main.c30e2eb0.js.map"
   },
   "entrypoints": [
-    "static/css/main.7aebf385.css",
-    "static/js/main.ad367059.js"
+    "static/css/main.ce1d02fd.css",
+    "static/js/main.c30e2eb0.js"
   ]
 }
