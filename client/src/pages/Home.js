@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react'
 import Gallery from '../components/Gallery';
-// import Header from '../components/Header';
-import { useAuthContext } from '../hooks/useAuthContext'
-// "proxy": "http://localhost:4000",
+
 const baseUrl = (process.env.NODE_ENV === 'development') ? 'http://localhost:4000' : 'https://picsforall-backend.onrender.com';
 
 function Home() {
   const [data, setData] = useState([]);
   const url = `${baseUrl}/api/posts`;
-  console.log(url);
-  const navigate = useNavigate();
-  const { user } = useAuthContext();
 
   useEffect(() => {
     fetch(url)

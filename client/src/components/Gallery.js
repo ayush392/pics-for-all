@@ -88,7 +88,7 @@ function Gallery(props) {
           <Masonry gutter={"1.5rem"}>
             {
               data && data.map(x => {
-                return <div className='pos position-relative'>
+                return <div className='pos position-relative' key={x._id}>
                   <div className="card border border-0">
                     <div className='overlay' onClick={() => navigate(`/photos/${x._id}`, {
                       state: {
