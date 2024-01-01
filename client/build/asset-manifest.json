@@ -1,13 +1,17 @@
 {
   "files": {
-    "main.css": "https://picsforall.netlify.app/static/css/main.ce1d02fd.css",
-    "main.js": "https://picsforall.netlify.app/static/js/main.354b7598.js",
+    "main.css": "https://picsforall.netlify.app/static/css/main.09390a54.css",
+    "main.js": "https://picsforall.netlify.app/static/js/main.9008e039.js",
     "index.html": "https://picsforall.netlify.app/index.html",
-    "main.ce1d02fd.css.map": "https://picsforall.netlify.app/static/css/main.ce1d02fd.css.map",
-    "main.354b7598.js.map": "https://picsforall.netlify.app/static/js/main.354b7598.js.map"
+    "static/media/heart_red.svg": "https://picsforall.netlify.app/static/media/heart_red.06934ef8324095248cbd615761c09e97.svg",
+    "static/media/heart_black.svg": "https://picsforall.netlify.app/static/media/heart_black.fc2f477ae7d119763ef7cab7a2fce522.svg",
+    "static/media/pen.svg": "https://picsforall.netlify.app/static/media/pen.89b096bfc32455579bffad386bcb496d.svg",
+    "static/media/search_icon.svg": "https://picsforall.netlify.app/static/media/search_icon.f1aa2ae9bd73ab19e2f9dbc5be582951.svg",
+    "main.09390a54.css.map": "https://picsforall.netlify.app/static/css/main.09390a54.css.map",
+    "main.9008e039.js.map": "https://picsforall.netlify.app/static/js/main.9008e039.js.map"
   },
   "entrypoints": [
-    "static/css/main.ce1d02fd.css",
-    "static/js/main.354b7598.js"
+    "static/css/main.09390a54.css",
+    "static/js/main.9008e039.js"
   ]
 }
