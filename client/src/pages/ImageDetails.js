@@ -7,6 +7,7 @@ import Avatar from "../components/Avatar";
 import heart_black from "../icons/heart_black.svg";
 import heart_red from "../icons/heart_red.svg";
 import pen from "../icons/pen.svg";
+import rectangle_icon from "../icons/rectangle-icon.svg";
 
 const baseUrl =
   process.env.NODE_ENV === "development"
@@ -156,10 +157,7 @@ function ImageDetails() {
       />
       {!isLoaded && (
         <div className=" placeholder-glow">
-          <div
-            className="img-det placeholder w-50"
-            style={{ height: "200px" }}
-          ></div>
+          <img src={rectangle_icon} className="img-det placeholder" />
         </div>
       )}
 
