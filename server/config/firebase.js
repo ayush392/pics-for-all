@@ -19,10 +19,10 @@ const storage = fbStorage.getStorage(app);
 const upload = multer({ storage: multer.memoryStorage() });
 
 const getImageURL = async (req) => {
-  console.log(req, "firebase22");
+  // console.log(req, "firebase22");
   const storageRef = fbStorage.ref(
     storage,
-    `files/${req.file.filename + " " + Date()}`
+    `files/${req.file.originalname + " " + Date()}`
   );
 
   const metadata = {
