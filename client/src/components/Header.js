@@ -83,7 +83,7 @@ function Header() {
                 aria-expanded="false"
               >
                 <Avatar
-                  w="2.125rem"
+                  w="2rem"
                   ch={user?.username[0].toUpperCase()}
                   str={user?.username}
                 />
@@ -133,13 +133,13 @@ function Header() {
 
       {/* -------------------DESKTOP-------------------------- */}
 
-      <nav className="navbar align-items-center sticky-top bg-white shadow desktop">
+      <nav className="navbar align-items-center sticky-top bg-white shadow-sm desktop">
         <Link
           to={"/"}
           className=" d-flex align-items-center  navbar-brand ms-3"
         >
-          <img src={"./bitmap.svg"} alt="logo" width="40" />
-          <div className="h3 m-0 ms-1">PicsForAll</div>
+          <img src={"./bitmap.svg"} alt="logo" width="38" />
+          <div className="h4 text-dark m-0 ms-1">PicsForAll</div>
         </Link>
 
         <form
@@ -149,7 +149,7 @@ function Header() {
         >
           <div className="input-group">
             <input
-              className="form-control"
+              className="form-control form-control-sm fs-6"
               type="search"
               value={query}
               onChange={handleChange}
@@ -159,7 +159,7 @@ function Header() {
             />
             <button
               onClick={handleSearch}
-              className="btn btn-dark"
+              className="btn btn-sm btn-dark fs-6"
               type="submit"
               id="desktop-search-btn"
             >
@@ -170,14 +170,14 @@ function Header() {
         <button
           type="button"
           onClick={() => navigate("/plus")}
-          className="btn border border-secondary"
+          className="btn btn-sm border-secondary "
         >
           <GradientText text="PicsForAll+" />
         </button>
         <button
           type="button"
           onClick={handleClick}
-          className="btn btn-outline-dark"
+          className="btn btn-sm border-secondary text-dark fs-6"
         >
           Submit a photo
         </button>
