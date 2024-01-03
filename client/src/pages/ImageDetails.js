@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import FileDownload from "js-file-download";
-// import Error from './Error';
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import Avatar from "../components/Avatar";
 import heart_black from "../icons/heart_black.svg";
@@ -15,13 +13,11 @@ const baseUrl =
     : "https://picsforall-backend.onrender.com";
 
 function ImageDetails() {
-  const { state } = useLocation();
-  console.log(state);
-  const [isLike, setIsLike] = useState(state ? state.isLike : false);
+  // console.log(state);
   const { id } = useParams();
   const navigate = useNavigate();
   const url = `${baseUrl}/api/posts/photos/${id}`;
-  const [imgDetail, setImgDetail] = useState([]);
+  const [imgDetail, setImgDetail] = useState();
   const [isLoaded, setIsLoaded] = useState(false);
   const { user } = useAuthContext();
 
@@ -32,13 +28,19 @@ function ImageDetails() {
       .catch((e) => console.log(e));
   }, [url, user]);
 
-  function downloadImage(id, filename) {
-    fetch(`${baseUrl}/api/posts/download/${id}`)
-      .then((res) => res.blob())
-      .then((response) => {
-        FileDownload(response, filename);
-      })
-      .catch((e) => console.log(e));
+  async function downloadImage(url, id) {
+    try {
+      console.log(url, id);
+      const blob = new Blob([await fetch(url).then((res) => res.blob())]);
+      const fileUrl = window.URL.createObjectURL(blob);
+      let link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = "Picsforall-" + id.slice(0, 5) + ".jpg";
+      link.click();
+    } catch (error) {
+      console.log(error);
+      console.log(error.message);
+    }
   }
 
   function likePost(postId, username) {
@@ -56,11 +58,12 @@ function ImageDetails() {
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log(response);
-        setIsLike(true);
+        // console.log(response);
+        setImgDetail(response);
       })
       .catch((e) => console.log(e.message));
   }
+
   function unlikePost(postId, username) {
     if (!user) {
       navigate("/login");
@@ -76,19 +79,19 @@ function ImageDetails() {
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log(response);
-        setIsLike(false);
+        // console.log(response);
+        setImgDetail(response);
       })
       .catch((e) => console.log(e.message));
   }
 
   return (
     <>
-      {console.log(imgDetail, 80)}
-      {/* {setIsLike(imgDetail.liked_by.includes(user.username))} */}
-      {imgDetail.user && (
+      {/* {console.log(imgDetail, 80)} */}
+      {/* ------------------------------ NAV (user, download btn) ---------------------- */}
+      {imgDetail?.user && (
         <div className="container">
-          <div className="d-flex justify-content-between mt-3 mb-2 pb-1">
+          <div className="d-flex justify-content-between align-items-center my-3">
             <div
               role="button"
               name={imgDetail.user.username}
@@ -109,46 +112,16 @@ function ImageDetails() {
             </div>
 
             <button
-              className="btn btn-success btn-sm"
-              onClick={() =>
-                downloadImage(
-                  imgDetail._id,
-                  imgDetail.user.fName + "-" + imgDetail._id + ".jpg"
-                )
-              }
+              className="btn btn-success"
+              onClick={() => downloadImage(imgDetail.image, imgDetail._id)}
             >
               Download
             </button>
           </div>
         </div>
       )}
-      {/* <div className='flex-container'>
-                    <div className='profil' onClick={() => navigate(`../user/${imgDetail.user.username}`)}>
-                        <img width="50px" className='profile-img' src={avatarUrl} alt='user' />
-                        <span className='profile-name' >{imgDetail.user.fName + " " + imgDetail.user.lName}</span>
-                    </div>
 
-                    <div>
-                        {
-                            (user && isLike) ?
-                                <button className='btn btn-outline-danger me-2' onClick={() => user ? unlikePost(imgDetail._id, user.username) : navigate('/login')} > ❤ </button>
-                                :
-                                <button className='btn btn-outline-secondary me-2' onClick={() => user ? likePost(imgDetail._id, user.username) : navigate('/login')} > ❤ </button>
-                        }
-                        <button type="button" className="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Download free
-                        </button>
-                        <ul className="dropdown-menu">
-                            <li><button className="dropdown-item" onClick={() => downloadImage(imgDetail._id, imgDetail.user.fName + '-' + imgDetail._id + '.jpg')}>Small</button></li>
-                            <li><button className="dropdown-item" name={imgDetail.user.fName + '-' + imgDetail._id + '.jpg'} value={imgDetail.image} >Medium</button></li>
-                            <li><button className="dropdown-item" name={imgDetail.user.fName + '-' + imgDetail._id + '.jpg'} value={imgDetail.image} >Large</button></li>
-                            <li><hr className="dropdown-divider" /></li>
-                            <li><button className="dropdown-item" name={imgDetail.user.fName + '-' + imgDetail._id + '.jpg'} value={imgDetail.image} >Original Size</button></li>
-                        </ul>
-                    </div>
-
-                </div> */}
-
+      {/* ------------------------------- IMAGE ------------------------------- */}
       <img
         className={`img-det ${!isLoaded && "visually-hidden"}`}
         src={imgDetail?.image}
@@ -157,47 +130,50 @@ function ImageDetails() {
       />
       {!isLoaded && (
         <div className=" placeholder-glow">
-          <img src={rectangle_icon} className="img-det placeholder" />
+          <img
+            src={rectangle_icon}
+            alt="placeholder"
+            className="img-det placeholder"
+          />
         </div>
       )}
+
+      {/* ------------------------------ LIKE, SHARE and EDIT button ---------------------------- */}
 
       {imgDetail && (
         <div className="container">
           <div className="d-flex justify-content-between align-items-center mt-2 mb-3 pt-1">
             <div className="d-flex">
-              {
-                /* {user && x.liked_by.includes(user.username)} */
-                user && isLike ? (
-                  <button
-                    className="btn btn-sm border-danger"
-                    onClick={() =>
-                      user
-                        ? unlikePost(imgDetail._id, user.username)
-                        : navigate("/login")
-                    }
-                  >
-                    <img src={heart_red} alt="heart" className="d-block" />
-                  </button>
-                ) : (
-                  <button
-                    className="btn btn-sm border-secondary "
-                    onClick={() =>
-                      user
-                        ? likePost(imgDetail._id, user.username)
-                        : navigate("/login")
-                    }
-                  >
-                    <img
-                      src={heart_black}
-                      alt="heart"
-                      className=" d-block opacity-75"
-                    />
-                  </button>
-                )
-              }
+              {user && imgDetail.liked_by.includes(user.username) ? (
+                <button
+                  className="btn btn-sm border-danger"
+                  onClick={() =>
+                    user
+                      ? unlikePost(imgDetail._id, user.username)
+                      : navigate("/login")
+                  }
+                >
+                  <img src={heart_red} alt="heart" className="d-block" />
+                </button>
+              ) : (
+                <button
+                  className="btn btn-sm border-secondary "
+                  onClick={() =>
+                    user
+                      ? likePost(imgDetail._id, user.username)
+                      : navigate("/login")
+                  }
+                >
+                  <img
+                    src={heart_black}
+                    alt="heart"
+                    className=" d-block opacity-75"
+                  />
+                </button>
+              )}
 
               {user &&
-                imgDetail.user &&
+                imgDetail?.user &&
                 user.username === imgDetail.user?.username && (
                   <button
                     className="btn btn-sm border-secondary ms-3"
@@ -238,6 +214,7 @@ function ImageDetails() {
             </button>
           </div>
 
+          {/* --------------------------- IMAGE DESCRIPTION ---------------------------- */}
           <div className="mb-3">
             <h4 className="mb-3">{imgDetail?.description}</h4>
             <div className=" d-flex align-items-center text-secondary">
@@ -271,7 +248,7 @@ function ImageDetails() {
             </div>
           </div>
 
-          {imgDetail.tags && (
+          {imgDetail?.tags && (
             <div className="pt-2 mb-2">
               {imgDetail.tags.map((tag, i) => {
                 return (
@@ -288,28 +265,6 @@ function ImageDetails() {
           )}
         </div>
       )}
-      {/* <div className='flex-container'>
-                <div>
-                    <span className='pe-5'>Views: {imgDetail?.views}</span>
-                    <span>Downloads: {imgDetail?.downloads}</span>
-                </div>
-
-                <div>
-                    <button className='btn me-2 btn-outline-secondary' onClick={() => {
-                        navigator.clipboard.writeText(`${window.location.href}`);
-                        alert('Link copied to clipboard');
-                    }}>➦ Share</button>
-
-                    <button className="btn me-2 btn-outline-secondary">ℹ Info</button>
-                </div>
-            </div> */}
-
-      {/* <div className='m-1 ps-3 pe-3'>
-                {imgDetail.description && <h4>{imgDetail.description}</h4>}
-                {imgDetail.location && <p>📍 {imgDetail.location}</p>}
-                {imgDetail.date && <p>📅 Published on {new Date(imgDetail.date).toLocaleDateString()}</p>}
-                <p>🛡 Free to use under the PicsForAll License</p>
-            </div> */}
     </>
   );
 }

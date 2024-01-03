@@ -2,7 +2,6 @@ import { useState } from "react";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { useNavigate } from "react-router-dom";
 import "./gallery.css";
-// import FileDownload from "js-file-download";
 import Avatar from "./Avatar";
 import { useAuthContext } from "../hooks/useAuthContext";
 import heart_black from "../icons/heart_black.svg";
@@ -20,15 +19,6 @@ function Gallery(props) {
   const navigate = useNavigate();
   // console.log(props);
   const { data, setData } = props;
-
-  // function downloadImage(id, filename) {
-  //   fetch(`${baseUrl}/api/posts/download/${id}`)
-  //     .then(res => res.blob())
-  //     .then(response => {
-  //       FileDownload(response, filename);
-  //     })
-  //     .catch(e => console.log(e));
-  // }
 
   async function downloadImage(url, id) {
     try {
@@ -112,13 +102,7 @@ function Gallery(props) {
                     >
                       <div
                         className="overlay"
-                        onClick={() =>
-                          navigate(`/photos/${x._id}`, {
-                            state: {
-                              isLike: x.liked_by.includes(x.user.username),
-                            },
-                          })
-                        }
+                        onClick={() => navigate(`/photos/${x._id}`)}
                       ></div>
                       <div className="card-header bg-transparent p-2">
                         <div
@@ -143,13 +127,7 @@ function Gallery(props) {
                         alt="..."
                         style={{ minHeight: "180px" }}
                         onLoad={() => setIsLoaded(true)}
-                        onClick={() =>
-                          navigate(`/photos/${x._id}`, {
-                            state: {
-                              isLike: x.liked_by.includes(x.user.username),
-                            },
-                          })
-                        }
+                        onClick={() => navigate(`/photos/${x._id}`)}
                       />
 
                       <div className="card-body p-2">
@@ -230,18 +208,6 @@ function Gallery(props) {
                   </div>
                 );
               })}
-
-            {/* {!!!isLoaded &&
-              [1, 2, 3, 4, 5, 6].map((x) => {
-                return (
-                  <div className=" placeholder-glow ">
-                    <div
-                      className=" placeholder w-100"
-                      style={{ height: "200px" }}
-                    ></div>
-                  </div>
-                );
-              })} */}
           </Masonry>
         </ResponsiveMasonry>
       </div>
