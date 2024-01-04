@@ -180,6 +180,7 @@ function ImageDetails() {
                     onClick={() =>
                       navigate("/edit", {
                         state: {
+                          url: imgDetail.image,
                           id: imgDetail._id,
                           description: imgDetail.description,
                           tags: imgDetail.tags,

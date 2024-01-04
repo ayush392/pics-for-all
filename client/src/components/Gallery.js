@@ -171,6 +171,7 @@ function Gallery(props) {
                                 onClick={() =>
                                   navigate("/edit", {
                                     state: {
+                                      url: x.image,
                                       id: x._id,
                                       description: x.description,
                                       tags: x.tags,
