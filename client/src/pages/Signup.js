@@ -25,74 +25,89 @@ function Signup() {
     }
 
     return (
-        <div className="container">
-            <h1 className='m-4 text-center'>Join PicsForAll</h1>
-            <div className="mt-3 mb-3 text-center">
-                <p>Already have an account?
-                    <span className='link-primary' role='button' onClick={() => navigate('/login', { replace: true })}> Login</span>
-                </p>
+      <div className=" mt-md-4 mt-lg-5 ">
+        <div className="container" style={{ maxWidth: "29.75rem" }}>
+          <h1 className="m-4 text-center">Join PicsForAll</h1>
+          <div className="mt-3 mb-3 text-center text-secondary ">
+            <p>
+              Already have an account?
+              <span
+                className="link-success"
+                role="button"
+                onClick={() => navigate("/login", { replace: true })}
+              >
+                {" "}
+                Login
+              </span>
+            </p>
+          </div>
+          <br />
+          <form className="row g-3" onSubmit={handleSubmit}>
+            <div className="col-6">
+              <label className="form-label">First name</label>
+              <input
+                type="text"
+                onChange={(e) => setFName(e.target.value)}
+                value={fName}
+                className="form-control"
+              />
             </div>
-            <br />
-            <form className="row g-3" onSubmit={handleSubmit}>
-                <div className="col-6">
-                    <label className="form-label">First name</label>
-                    <input
-                        type='text'
-                        onChange={e => setFName(e.target.value)}
-                        value={fName}
-                        className="form-control"
-                    />
-                </div>
-                <div className="col-6">
-                    <label className="form-label">Last name</label>
-                    <input
-                        type='text'
-                        onChange={e => setLName(e.target.value)}
-                        value={lName}
-                        className="form-control"
-                    />
-                </div>
-                <div className="col-12">
-                    <label className="form-label">Email</label>
-                    <input
-                        type='email'
-                        onChange={e => setEmail(e.target.value)}
-                        value={email}
-                        className="form-control"
-                    />
-                </div>
-                <div className="col-12">
-                    <label className="form-label">Username</label>
-                    <input
-                        type='text'
-                        onChange={e => setUsername(e.target.value)}
-                        value={username}
-                        className="form-control"
-                    />
-                </div>
-                <div className="col-12">
-                    <label className="form-label">Password</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        onChange={e => setPassword(e.target.value)}
-                        value={password}
-                    />
-                    <div className="form-text">
-                        Your password must be min. 8 characters long and contain letters and numbers.
-                    </div>
-                </div>
-                <div className="col-12">
-                    {error && <div className='text-danger'><b>{error}</b></div>}
-                </div>
-                <div className="col-12">
-                    <button type='submit' className='btn btn-dark w-100' disabled={isLoading}>Join</button>
-                </div>
-            </form>
-
+            <div className="col-6">
+              <label className="form-label">Last name</label>
+              <input
+                type="text"
+                onChange={(e) => setLName(e.target.value)}
+                value={lName}
+                className="form-control"
+              />
+            </div>
+            <div className="col-12">
+              <label className="form-label">Email</label>
+              <input
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                className="form-control"
+              />
+            </div>
+            <div className="col-12">
+              <label className="form-label">Username</label>
+              <input
+                type="text"
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
+                className="form-control"
+              />
+            </div>
+            <div className="col-12">
+              <label className="form-label">Password</label>
+              <input
+                type="password"
+                className="form-control"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+              />
+              <div className="form-text text-secondary ">
+                Your password must be min. 8 characters long and contain letters
+                and numbers.
+              </div>
+            </div>
+            <div className="col-12">
+              {error && <div className="text-danger">{error}</div>}
+            </div>
+            <div className="col-12">
+              <button
+                type="submit"
+                className="btn btn-dark w-100"
+                disabled={isLoading}
+              >
+                Join
+              </button>
+            </div>
+          </form>
         </div>
-
-    )
+      </div>
+    );
 }
 
 export default Signup
