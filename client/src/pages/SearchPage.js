@@ -8,25 +8,40 @@ function SearchPage() {
   const url = `${baseUrl}/api/posts/search/${query}`;
   const [data, setData] = useState([]);
 
-
   useEffect(() => {
     fetch(url)
-      .then(res => res.json())
-      .then(response => {
-        setData(response)
+      .then((res) => res.json())
+      .then((response) => {
+        setData(response);
         // console.log(response);
       })
-      .catch(e => console.log(e.message));
+      .catch((e) => {
+        alert(e.message);
+        console.log(e.message);
+      });
   }, [query, url]);
 
   console.log(data);
 
   return (
-    <div>
-      <h1>{query}</h1>
-      {data && <Gallery data={data} setData={setData} />}
+    <div className="container">
+      {data.length === 0 ? (
+        <>
+          <h3 className="mt-3 mt-md-4 text-black opacity-75">
+            No results found for {query}
+          </h3>
+          <h4 className="text-secondary">try searching for something else</h4>
+        </>
+      ) : (
+        <>
+          <h4 className="my-3 my-md-4 text-black opacity-75">
+            Showing search results for {query}:
+          </h4>
+          {data && <Gallery data={data} setData={setData} />}
+        </>
+      )}
     </div>
-  )
+  );
 }
 
 export default SearchPage
