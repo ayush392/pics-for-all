@@ -12,13 +12,13 @@ function UploadImage() {
   const [tags, setTags] = useState("");
   const [location, setLocation] = useState("");
   const [imgDimensions, setImgDimensions] = useState({ width: 0, height: 0 });
-
+  const [isUploading, setIsUploading] = useState(false);
   const { user } = useAuthContext();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
-
+    setIsUploading(true);
     if (!user) {
       navigate("/login");
       return;
@@ -26,6 +26,7 @@ function UploadImage() {
 
     if (!description || !tags || !image) {
       alert("All fields must be filled");
+      setIsUploading(false);
       return;
     }
 
@@ -47,20 +48,41 @@ function UploadImage() {
       });
 
       const json = await response.json();
-      if (!response.ok)
-        throw new Error("Something went wrong. Please try again");
-      else navigate(-1, { replace: true });
+      if (!response.ok) {
+        setIsUploading(false);
+        throw new Error("Something went wrong. Please try again Later");
+      } else {
+        setIsUploading(false);
+        alert("Image uploaded successfully");
+        navigate(-1, { replace: true });
+      }
       // (json) ? navigate(-1) : alert('Something went wrong. Please try again')
     } catch (error) {
       alert(error.message);
     }
   }
 
-  async function getImageDimensions(file) {
-    let img = new Image();
-    img.src = URL.createObjectURL(file);
-    await img.decode();
-    setImgDimensions({ width: img.width, height: img.height });
+  async function validateAndSetDimensions(file, e) {
+    const allowedFileTypes = [
+      "image/gif",
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+    ];
+    try {
+      if (!allowedFileTypes.includes(file.type)) {
+        setImage("");
+        e.target.value = "";
+        throw new Error("File type not supported");
+      }
+      let img = new Image();
+      img.src = URL.createObjectURL(file);
+      await img.decode();
+      setImgDimensions({ width: img.width, height: img.height });
+    } catch (error) {
+      alert(error.message);
+    }
+    console.log(file);
   }
 
   return (
@@ -74,11 +96,14 @@ function UploadImage() {
               className="form-control"
               type="file"
               onChange={async (e) => {
-                await getImageDimensions(e.target.files[0]);
-                // setImgDimensions({ width, height });
                 setImage(e.target.files[0]);
+                await validateAndSetDimensions(e.target.files[0], e);
+                // setImgDimensions({ width, height });
               }}
             />
+            <label className=" form-text text-secondary">
+              Allowed file formats are .jpg, .jpeg, .png, .gif, .webp
+            </label>
           </div>
           <div className="mb-3">
             <label className="form-label">Description</label>
@@ -112,7 +137,11 @@ function UploadImage() {
             />
           </div>
           <div className="mb-3 mt-4">
-            <button type="submit" className="btn btn-dark w-100">
+            <button
+              type="submit"
+              className="btn btn-dark w-100"
+              disabled={isUploading}
+            >
               Submit
             </button>
           </div>
