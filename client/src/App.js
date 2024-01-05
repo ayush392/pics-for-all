@@ -21,21 +21,24 @@ function App() {
       <Routes>
         {/* TODO: Modify these navigate links */}
         {/* <Route path='/login' element={!user ? <Login /> : <Navigate to='/' />} /> */}
-        <Route path='/login' element={<Login />} />
-        <Route path='/signup' element={<Signup />} />
-        <Route path='/upload' element={<UploadImage />} />
-        <Route path='/edit' element={<EditModal />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/upload" element={<UploadImage />} />
+        <Route path="/edit" element={<EditModal />} />
 
-        <Route path='/' element={<SharedLayout />} >
+        <Route path="/" element={<SharedLayout />}>
           <Route index element={<Home />} />
-          <Route path='s/photos/:query' element={<SearchPage />} />
-          <Route path='photos/:id' element={<ImageDetails />} />
-          <Route path='plus' element={<Plus />} />
-          <Route path='/user/:username' element={<UserProfile val='posts' />} />
-          <Route path='/likes/:username' element={<UserProfile val='likes' />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="s/photos/:query" element={<SearchPage />} />
+          <Route path="photos/:id" element={<ImageDetails />} />
+          <Route path="plus" element={<Plus />} />
+          <Route path="/user/:username" element={<UserProfile val="posts" />} />
+          <Route
+            path="/likes/:username"
+            element={<UserProfile val="likes" />}
+          />
           {/* <Route path='*' element={<Error />} /> */}
         </Route>
-        <Route path='*' element={<Error />} />
+        <Route path="*" element={<Error />} />
       </Routes>
     </>
   );

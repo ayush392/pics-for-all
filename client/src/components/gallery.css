@@ -1,16 +1,18 @@
 .topic-link {
-  color: gray;
-  margin: 0.5rem;
-  /* padding: 5px; */
-  display: inline-block;
-  text-decoration: none;
+    color: gray;
+    fill: gray;
+    margin: 0 0.75rem;
+    padding-bottom: 8px;
+    display: inline-block;
+    text-decoration: none;
 }
 
 .active-topic {
   color: black;
-  padding-bottom: 5px;
-  /* text-decoration: underline; */
-  border-bottom: 2px solid black;
+  fill: black;
+  padding-bottom: 8px;
+  margin-bottom: 0;
+  border-bottom: 2px solid black
 }
 
 .card-container {

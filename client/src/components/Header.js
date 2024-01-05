@@ -4,7 +4,8 @@ import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../hooks/useAuthContext";
 import "./gallery.css";
 import Avatar from "./Avatar";
-import search_icon from "../icons/search_icon.svg";
+import GradientText from "./GradientText";
+import logo from "../icons/bitmap.webp";
 
 function Header() {
   const { logout } = useLogout();
@@ -18,6 +19,7 @@ function Header() {
   }
 
   function handleSearch() {
+    if (query === "") return;
     navigate(`/s/photos/${query}`);
   }
 
@@ -27,9 +29,14 @@ function Header() {
 
   return (
     <>
-      <nav className="navbar align-items-center mobile sticky-top bg-light shadow-sm">
-        <Link to={"/"} className="navbar-brand ms-2 ps-1">
-          PFA
+      {/* --------------------MOBILE----------------------------- */}
+      <nav className="navbar align-items-center sticky-top bg-white shadow-sm mobile">
+        <Link
+          to={"/"}
+          className="d-flex align-items-center navbar-brand m-0 p-0 ms-2 ps-1"
+        >
+          <img src={logo} alt="logo" width="34" />
+          <div className="h4 m-0 ms-1">PFA</div>
         </Link>
 
         <form
@@ -44,22 +51,24 @@ function Header() {
               value={query}
               onChange={handleChange}
               placeholder="Search images"
+              required
               aria-label="Search"
               aria-describedby="mobile-search-btn"
             />
             <button
               onClick={handleSearch}
-              className="btn border bg-white btn-sm"
+              className="btn border border-start-0 btn-sm"
               type="submit"
               id="mobile-search-btn"
             >
               <svg
+                fill="#6D6D6D"
                 xmlns="http://www.w3.org/2000/svg"
-                height="16"
-                width="16"
-                viewBox="0 0 512 512"
+                viewBox="0 0 30 30"
+                width="18px"
+                height="18px"
               >
-                <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+                <path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z" />
               </svg>
             </button>
           </div>
@@ -75,8 +84,8 @@ function Header() {
                 aria-expanded="false"
               >
                 <Avatar
-                  w="2.125rem"
-                  ch={user?.username[0]}
+                  w="2rem"
+                  ch={user?.username[0].toUpperCase()}
                   str={user?.username}
                 />
               </span>
@@ -99,30 +108,39 @@ function Header() {
                 </li>
                 <li>
                   <Link to={"/plus"} className="dropdown-item text-info">
-                    Picsforall+
+                    <GradientText text="PicsForAll+" />
                   </Link>
                 </li>
                 <li>
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <button className="dropdown-item" onClick={() => logout()}>
+                  <button
+                    className="dropdown-item text-danger"
+                    onClick={() => logout()}
+                  >
                     Logout @{user?.username}
                   </button>
                 </li>
               </ul>
             </div>
           ) : (
-            <Link className="btn btn-outline-dark" to={"/login"}>
+            <Link className="btn btn-sm btn-outline-dark" to={"/login"}>
               Login
             </Link>
           )}
         </div>
       </nav>
 
-      <nav className="navbar align-items-center desktop sticky-top bg-light shadow">
-        <Link to={"/"} className="navbar-brand ms-3">
-          PicsForAll
+      {/* -------------------DESKTOP-------------------------- */}
+
+      <nav className="navbar align-items-center sticky-top bg-white shadow-sm desktop">
+        <Link
+          to={"/"}
+          className=" d-flex align-items-center  navbar-brand ms-3"
+        >
+          <img src={logo} alt="logo" width="38" />
+          <div className="h4 text-dark m-0 ms-1">PicsForAll</div>
         </Link>
 
         <form
@@ -132,7 +150,7 @@ function Header() {
         >
           <div className="input-group">
             <input
-              className="form-control"
+              className="form-control form-control-sm fs-6"
               type="search"
               value={query}
               onChange={handleChange}
@@ -142,7 +160,7 @@ function Header() {
             />
             <button
               onClick={handleSearch}
-              className="btn btn-dark"
+              className="btn btn-sm btn-dark fs-6"
               type="submit"
               id="desktop-search-btn"
             >
@@ -153,14 +171,14 @@ function Header() {
         <button
           type="button"
           onClick={() => navigate("/plus")}
-          className="btn btn-outline-info"
+          className="btn btn-sm border-secondary "
         >
-          PicsForAll+
+          <GradientText text="PicsForAll+" />
         </button>
         <button
           type="button"
           onClick={handleClick}
-          className="btn btn-outline-dark"
+          className="btn btn-sm btn-outline-dark fs-6"
         >
           Submit a photo
         </button>
@@ -175,7 +193,7 @@ function Header() {
               >
                 <Avatar
                   w="2.125rem"
-                  ch={user?.username[0]}
+                  ch={user?.username[0].toUpperCase()}
                   str={user?.username}
                 />
               </span>
@@ -198,21 +216,24 @@ function Header() {
                 </li>
                 <li>
                   <Link to={"/plus"} className="dropdown-item text-info">
-                    Picsforall+
+                    <GradientText text="PicsForAll+" />
                   </Link>
                 </li>
                 <li>
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <button className="dropdown-item" onClick={() => logout()}>
+                  <button
+                    className="dropdown-item text-danger"
+                    onClick={() => logout()}
+                  >
                     Logout @{user?.username}
                   </button>
                 </li>
               </ul>
             </div>
           ) : (
-            <Link className="btn btn-outline-dark" to={"/login"}>
+            <Link className="btn btn-sm btn-outline-dark fs-6" to={"/login"}>
               Login
             </Link>
           )}

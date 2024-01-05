@@ -40,9 +40,9 @@ const downloadImage = async (req, res) => {
 // POST
 const createPost = async (req, res) => {
   try {
-    const { description, tags, location, username } = req.body;
+    const { description, tags, location, username, height, width } = req.body;
     const userDetails = await UserDetail.findOne({ username });
-
+    console.log(req.body);
     const tagsArr = String(tags).split(",");
     tagsArr.forEach((ele, idx) => {
       tagsArr[idx] = ele.trim();
@@ -55,12 +55,14 @@ const createPost = async (req, res) => {
       location: location,
       image: downloadURL,
       user: userDetails,
+      height: height,
+      width: width,
     });
 
     const response = await newPost.save();
 
     console.log("File successfully uploaded.");
-    res.status(201).json("response");
+    res.status(201).json(response);
   } catch (e) {
     console.log({ message: e.message });
     res.status(400).json({ message: e.message });
