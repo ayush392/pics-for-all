@@ -5,6 +5,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import "./gallery.css";
 import Avatar from "./Avatar";
 import GradientText from "./GradientText";
+import logo from "../icons/bitmap.webp";
 
 function Header() {
   const { logout } = useLogout();
@@ -34,7 +35,7 @@ function Header() {
           to={"/"}
           className="d-flex align-items-center navbar-brand m-0 p-0 ms-2 ps-1"
         >
-          <img src={"./bitmap.svg"} alt="logo" width="34" />
+          <img src={logo} alt="logo" width="34" />
           <div className="h4 m-0 ms-1">PFA</div>
         </Link>
 
@@ -124,7 +125,7 @@ function Header() {
               </ul>
             </div>
           ) : (
-            <Link className="btn btn-outline-dark" to={"/login"}>
+            <Link className="btn btn-sm btn-outline-dark" to={"/login"}>
               Login
             </Link>
           )}
@@ -138,7 +139,7 @@ function Header() {
           to={"/"}
           className=" d-flex align-items-center  navbar-brand ms-3"
         >
-          <img src={"./bitmap.svg"} alt="logo" width="38" />
+          <img src={logo} alt="logo" width="38" />
           <div className="h4 text-dark m-0 ms-1">PicsForAll</div>
         </Link>
 
@@ -177,7 +178,7 @@ function Header() {
         <button
           type="button"
           onClick={handleClick}
-          className="btn btn-sm border-secondary text-dark fs-6"
+          className="btn btn-sm btn-outline-dark fs-6"
         >
           Submit a photo
         </button>
@@ -232,7 +233,7 @@ function Header() {
               </ul>
             </div>
           ) : (
-            <Link className="btn btn-outline-dark" to={"/login"}>
+            <Link className="btn btn-sm btn-outline-dark fs-6" to={"/login"}>
               Login
             </Link>
           )}
