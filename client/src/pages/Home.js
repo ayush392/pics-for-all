@@ -45,9 +45,9 @@ function Home() {
                 planet. From grand vistas to macro shots, these images transport
                 viewers into the heart of the great outdoors.
               </p>
-              <button className="btn btn-light fw-semibold px-3">
+              <a href="#explore" className="btn btn-light fw-semibold px-3">
                 Explore
-              </button>
+              </a>
             </div>
           </div>
 
@@ -59,7 +59,9 @@ function Home() {
                 Explore the breathtaking landscapes, diverse flora and fauna,
                 and mesmerizing natural phenomena.
               </p>
-              <button className="btn btn-light">Explore</button>
+              <a href="#explore" className="btn btn-light">
+                Explore
+              </a>
             </div>
           </div>
         </div>
@@ -76,8 +78,8 @@ function Home() {
 
       <br />
 
+      <div id="explore"></div>
       {/* ------------- GALLERY -------------- */}
-
       {data && <Gallery data={data} setData={setData} />}
     </div>
   );

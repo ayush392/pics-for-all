@@ -88,7 +88,7 @@ function Gallery(props) {
 
   return (
     <>
-      <div className="container">
+      <div className="container mb-4 mb-lg-5 ">
         <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}>
           <Masonry gutter={"1.5rem"}>
             {data &&
@@ -209,6 +209,15 @@ function Gallery(props) {
                   </div>
                 );
               })}
+            {!isLoaded &&
+              [1, 2, 3, 4, 5, 6].map(() => (
+                <div className=" placeholder-glow">
+                  <div
+                    className=" placeholder w-100"
+                    style={{ height: "250px" }}
+                  ></div>
+                </div>
+              ))}
           </Masonry>
         </ResponsiveMasonry>
       </div>
