@@ -6,6 +6,7 @@ import heart_black from "../icons/heart_black.svg";
 import heart_red from "../icons/heart_red.svg";
 import pen from "../icons/pen.svg";
 import rectangle_icon from "../icons/rectangle-icon.svg";
+import EditModal from "../components/EditModal";
 
 const baseUrl =
   process.env.NODE_ENV === "development"
@@ -16,71 +17,54 @@ function ImageDetails() {
   // console.log(state);
   const { id } = useParams();
   const navigate = useNavigate();
-  const url = `${baseUrl}/api/posts/photos/${id}`;
+  const url = `${baseUrl}/api/posts/${id}`;
   const [imgDetail, setImgDetail] = useState();
   const [isLoaded, setIsLoaded] = useState(false);
   const { user } = useAuthContext();
+  const [modalOpen, setModalOpen] = useState(null);
 
   useEffect(() => {
-    fetch(url)
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${user?.token}`,
+      },
+    })
       .then((res) => res.json())
-      .then((response) => setImgDetail(response))
+      .then((response) => setImgDetail(response?.data))
       .catch((e) => console.log(e));
   }, [url, user]);
 
-  async function downloadImage(url, id) {
-    try {
-      console.log(url, id);
-      const blob = new Blob([await fetch(url).then((res) => res.blob())]);
-      const fileUrl = window.URL.createObjectURL(blob);
-      let link = document.createElement("a");
-      link.href = fileUrl;
-      link.download = "Picsforall-" + id.slice(0, 5) + ".jpg";
-      link.click();
-    } catch (error) {
-      console.log(error);
-      console.log(error.message);
-    }
+  function downloadImage(url) {
+    const a = document.createElement("a");
+    a.href = url.replace("/upload/", "/upload/fl_attachment/");
+
+    // Force download by appending and clicking
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
-  function likePost(postId, username) {
+  function handleLike(postId, type) {
     if (!user) {
       navigate("/login");
       return;
     }
-    fetch(`${baseUrl}/api/posts/like`, {
-      method: "PUT",
+    fetch(`${baseUrl}/api/posts/${type}/${postId}`, {
+      method: "PATCH",
       headers: {
         "Content-type": "application/json",
         Authorization: `Bearer ${user.token}`,
       },
-      body: JSON.stringify({ postId, username }),
+      // body: JSON.stringify({ postId, username }),
     })
       .then((res) => res.json())
       .then((response) => {
         // console.log(response);
-        setImgDetail(response);
-      })
-      .catch((e) => console.log(e.message));
-  }
-
-  function unlikePost(postId, username) {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    fetch(`${baseUrl}/api/posts/unlike`, {
-      method: "PUT",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-      body: JSON.stringify({ postId, username }),
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        // console.log(response);
-        setImgDetail(response);
+        setImgDetail(prev => {
+          return { ...prev, isLiked: response.data.isLiked }
+        });
       })
       .catch((e) => console.log(e.message));
   }
@@ -89,31 +73,30 @@ function ImageDetails() {
     <>
       {/* {console.log(imgDetail, 80)} */}
       {/* ------------------------------ NAV (user, download btn) ---------------------- */}
-      {imgDetail?.user && (
+      {imgDetail?.createdBy && (
         <div className="container">
           <div className="d-flex justify-content-between align-items-center my-3">
             <div
               role="button"
-              name={imgDetail.user.username}
-              onClick={() => navigate(`../user/${imgDetail.user.username}`)}
+              name={imgDetail.createdBy.username}
+              onClick={() => navigate(`../user/${imgDetail.createdBy.username}`)}
             >
               <Avatar
                 w="32px"
-                ch={imgDetail.user.username[0].toUpperCase()}
-                str={imgDetail.user.username}
+                avatar={imgDetail.createdBy.avatar}
               />
               <span className="ms-2" style={{ fontSize: "1.125rem" }}>
-                {imgDetail.user.fName.charAt(0).toUpperCase() +
-                  imgDetail.user.fName.slice(1) +
+                {imgDetail.createdBy.fName.charAt(0).toUpperCase() +
+                  imgDetail.createdBy.fName.slice(1) +
                   " " +
-                  imgDetail.user.lName.charAt(0).toUpperCase() +
-                  imgDetail.user.lName.slice(1)}
+                  imgDetail.createdBy.lName.charAt(0).toUpperCase() +
+                  imgDetail.createdBy.lName.slice(1)}
               </span>
             </div>
 
             <button
               className="btn btn-success"
-              onClick={() => downloadImage(imgDetail.image, imgDetail._id)}
+              onClick={() => downloadImage(imgDetail.image.url)}
             >
               Download
             </button>
@@ -124,7 +107,7 @@ function ImageDetails() {
       {/* ------------------------------- IMAGE ------------------------------- */}
       <img
         className={`img-det ${!isLoaded && "visually-hidden"}`}
-        src={imgDetail?.image}
+        src={imgDetail?.image?.url}
         alt="xyz"
         onLoad={() => setIsLoaded(true)}
       />
@@ -144,12 +127,12 @@ function ImageDetails() {
         <div className="container">
           <div className="d-flex justify-content-between align-items-center mt-2 mb-3 pt-1">
             <div className="d-flex">
-              {user && imgDetail.liked_by.includes(user.username) ? (
+              {imgDetail.isLiked ? (
                 <button
                   className="btn btn-sm border-danger"
                   onClick={() =>
                     user
-                      ? unlikePost(imgDetail._id, user.username)
+                      ? handleLike(imgDetail._id, "unlike")
                       : navigate("/login")
                   }
                 >
@@ -160,7 +143,7 @@ function ImageDetails() {
                   className="btn btn-sm border-secondary "
                   onClick={() =>
                     user
-                      ? likePost(imgDetail._id, user.username)
+                      ? handleLike(imgDetail._id, "like")
                       : navigate("/login")
                   }
                 >
@@ -173,21 +156,10 @@ function ImageDetails() {
               )}
 
               {user &&
-                imgDetail?.user &&
-                user.username === imgDetail.user?.username && (
+                user?.username === imgDetail.createdBy?.username && (
                   <button
                     className="btn btn-sm border-secondary ms-3"
-                    onClick={() =>
-                      navigate("/edit", {
-                        state: {
-                          url: imgDetail.image,
-                          id: imgDetail._id,
-                          description: imgDetail.description,
-                          tags: imgDetail.tags,
-                          location: imgDetail.location,
-                        },
-                      })
-                    }
+                    onClick={() => setModalOpen(imgDetail._id)}
                   >
                     <span>Edit </span>
                     <img className=" pb-1 opacity-75" src={pen} alt="pen" />
@@ -217,16 +189,16 @@ function ImageDetails() {
 
           {/* --------------------------- IMAGE DESCRIPTION ---------------------------- */}
           <div className="mb-3">
-            <h4 className="mb-3">{imgDetail?.description}</h4>
-            <div className=" d-flex align-items-center text-secondary">
+            {imgDetail?.description && <h4 className="mb-3">{imgDetail.description}</h4>}
+            {imgDetail?.location && <div className=" d-flex align-items-center text-secondary">
               <svg className="me-2" width="16" height="16" viewBox="0 0 24 24">
                 <path
                   fill="#767676"
                   d="M17.6 4.2C16 2.7 14.1 2 12 2s-4 .7-5.6 2.2C4.8 5.7 4 7.7 4 10.2c0 1.7.7 3.5 2 5.4 1.3 2 3.3 4.1 6 6.4 2.7-2.3 4.7-4.4 6-6.4 1.3-2 2-3.8 2-5.4 0-2.5-.8-4.5-2.4-6zm-1.1 10.1c-1 1.5-2.5 3.2-4.5 5.1-2-1.9-3.5-3.6-4.5-5.1-1-1.5-1.5-2.9-1.5-4.1 0-1.8.6-3.3 1.7-4.5C8.9 4.6 10.3 4 12 4s3.1.6 4.3 1.7c1.2 1.2 1.7 2.6 1.7 4.5 0 1.2-.5 2.5-1.5 4.1zm-2-4.3c0 1.4-1.1 2.5-2.5 2.5S9.5 11.4 9.5 10s1.1-2.5 2.5-2.5 2.5 1.1 2.5 2.5z"
                 ></path>
               </svg>
-              <span>{imgDetail?.location}</span>
-            </div>
+              <span>{imgDetail.location}</span>
+            </div>}
             <div className=" d-flex align-items-center text-secondary">
               <svg className="me-2" width="16" height="16" viewBox="0 0 24 24">
                 <path
@@ -235,7 +207,11 @@ function ImageDetails() {
                 ></path>
               </svg>
               <span>
-                Published on {new Date(imgDetail?.date).toLocaleDateString()}
+                Updated on {new Date(imgDetail?.updatedAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
               </span>
             </div>
             <div className=" d-flex align-items-center text-secondary">
@@ -266,6 +242,7 @@ function ImageDetails() {
           )}
         </div>
       )}
+      <EditModal modalOpen={modalOpen} setModalOpen={setModalOpen} setImgDetail={setImgDetail}/>
     </>
   );
 }

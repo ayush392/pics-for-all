@@ -31,11 +31,7 @@ function App() {
           <Route path="s/photos/:query" element={<SearchPage />} />
           <Route path="photos/:id" element={<ImageDetails />} />
           <Route path="plus" element={<Plus />} />
-          <Route path="/user/:username" element={<UserProfile val="posts" />} />
-          <Route
-            path="/likes/:username"
-            element={<UserProfile val="likes" />}
-          />
+          <Route path="/user/:username" element={<UserProfile />} />
           {/* <Route path='*' element={<Error />} /> */}
         </Route>
         <Route path="*" element={<Error />} />

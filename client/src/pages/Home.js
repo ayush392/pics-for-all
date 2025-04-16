@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Gallery from "../components/Gallery";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const baseUrl =
   process.env.NODE_ENV === "development"
@@ -10,16 +11,23 @@ function Home() {
   const [data, setData] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const url = `${baseUrl}/api/posts`;
+  const { user } = useAuthContext();
 
   useEffect(() => {
-    fetch(url)
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${user?.token}`,
+      },
+    })
       .then((res) => res.json())
       .then((response) => {
-        setData(response);
+        setData(response.data);
         // console.log(response);
       })
       .catch((e) => console.log(e.message));
-  }, [url]);
+  }, [user?.token]);
 
   return (
     <div>

@@ -32,10 +32,10 @@ export const useLogin = () => {
 
         if (response.ok) {
             //save user to local storage
-            localStorage.setItem('user', JSON.stringify(json))
+            localStorage.setItem('user', JSON.stringify(json.data))
 
             // update authContext
-            dispatch({ type: 'LOGIN', payload: json })
+            dispatch({ type: 'LOGIN', payload: json.data })
 
             setIsLoading(false);
             // navigate(1);

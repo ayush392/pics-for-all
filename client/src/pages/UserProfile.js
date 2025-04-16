@@ -1,41 +1,81 @@
 import { useEffect, useState } from 'react'
-import { useParams, NavLink } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import Gallery from '../components/Gallery';
-import UserInfoBox from '../components/UserInfoBox';
+import Avatar from '../components/Avatar';
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const baseUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:4000"
     : "https://picsforall-backend.onrender.com";
 
-function UserProfile({ val }) {
+function UserProfile() {
   const { username } = useParams();
-  const [userInfo, setUserInfo] = useState([]);
-  // const userUrl = `https://api.unsplash.com/users/${userName}/${val}?client_id=${clientKey}`;
+  const [userInfo, setUserInfo] = useState();
+  const [likedPosts, setLikedPosts] = useState([]);
+  const [userPosts, setUserPosts] = useState([]);
+  const [openTab, setOpenTab] = useState("photos");
+  const { user } = useAuthContext();
 
   useEffect(() => {
-    fetch(`${baseUrl}/api/user/${val}/${username}`)
+    fetch(`${baseUrl}/api/user/info/${username}`, {
+      method: "GET",
+      headers:{
+        "Content-type": "application/json",
+        Authorization: `Bearer ${user?.token}`,
+      }
+    })
       .then((res) => res.json())
       .then((response) => {
-        setUserInfo(response);
-        console.log(response);
+        setUserInfo(response?.data?.userInfo);
+        setUserPosts(response?.data?.userPosts);
+        setLikedPosts(response?.data?.likedPosts);
+        // console.log(response);
       })
       .catch((e) => console.log(e));
-  }, [val, username]);
+  }, [username, user?.token]);
 
   // console.log(user);
   // console.log(user.photos);
   // const data = user.photos;
   return (
-    <>
-      <UserInfoBox />
+    userInfo && <>
+      <div className="container my-3 my-md-4">
+        <div
+          className=" d-flex flex-column flex-md-row m-auto"
+          style={{ width: "fit-content" }}
+        >
+          <div className="me-1 me-md-3 me-lg-4 ">
+            {userInfo && (
+              <Avatar
+                w="9.3rem"
+                avatar={userInfo?.avatar}
+              />
+            )}
+          </div>
 
-      <nav className="mx-3 d-flex align-items-center">
-        <NavLink
-          className={({ isActive }) =>
-            isActive ? "active-topic topic-link" : "topic-link"
-          }
-          to={`../user/${username}`}
+          <div className="ms-0 ms-md-3 ms-lg-4 ">
+            <h1 className="mb-0">{`${userInfo.fName} ${userInfo.lName}`}</h1>
+            <h5 className="text-secondary mt-0">{`@${userInfo.username}`}</h5>
+            <h6 className="my-2 fw-normal">{`Download free, beautiful high-quality photos curated by ${userInfo?.fName} ${userInfo?.lName}.`}</h6>
+            <div className=" d-flex align-items-center text-secondary">
+              <svg className="me-2" width="18" height="18" viewBox="0 0 24 24">
+                <path
+                  fill="#767676"
+                  d="M5.988 15.637C7.313 17.596 9.317 19.717 12 22c2.683-2.283 4.688-4.404 6.013-6.363C19.338 13.679 20 11.867 20 10.2c0-2.5-.804-4.492-2.413-5.975C15.979 2.742 14.117 2 12 2c-2.117 0-3.979.742-5.587 2.225C4.804 5.708 4 7.7 4 10.2c0 1.667.663 3.479 1.988 5.437ZM15 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                ></path>
+              </svg>
+              <span className="fs-6">India</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+
+      <div className="mx-3 d-flex align-items-center">
+        <div
+          className={`${openTab === 'photos' ? "active-topic topic-link" : "topic-link"}`}
+          onClick={() => setOpenTab('photos')}
         >
           <div className="d-flex align-items-center">
             <svg width="20" height="20" viewBox="0 0 24 24">
@@ -43,13 +83,11 @@ function UserProfile({ val }) {
             </svg>
             <span className="ms-2">Photos</span>
           </div>
-        </NavLink>
+        </div>
 
-        <NavLink
-          className={({ isActive }) =>
-            isActive ? "active-topic topic-link" : "topic-link"
-          }
-          to={`../likes/${username}`}
+        <div
+          className={`${openTab === 'likes' ? "active-topic topic-link" : "topic-link"}`}
+          onClick={() => setOpenTab('likes')}
         >
           <div className="d-flex align-items-center">
             <svg
@@ -62,11 +100,14 @@ function UserProfile({ val }) {
             </svg>
             <span className="ms-2">Likes</span>
           </div>
-        </NavLink>
-      </nav>
+        </div>
+      </div>
       <hr className="mt-0" />
       <br />
-      {userInfo && <Gallery data={userInfo} setData={setUserInfo} />}
+      {openTab === 'likes' ?
+        <Gallery data={likedPosts} setData={setLikedPosts} />
+        : <Gallery data={userPosts} setData={setUserPosts} />}
+
     </>
   );
 }

@@ -16,7 +16,7 @@ function UserInfoBox() {
     fetch(userUrl)
       .then((res) => res.json())
       .then((response) => {
-        setUserInfo(response[0]);
+        setUserInfo(response.data);
         // console.log(response[0], 17);
       })
       .catch((e) => console.log(e));
@@ -33,10 +33,7 @@ function UserInfoBox() {
             {userInfo && (
               <Avatar
                 w="9.3rem"
-                ch={
-                  userInfo.username ? userInfo.username[0].toUpperCase() : " "
-                }
-                str={username}
+                avatar={userInfo?.avatar}
               />
             )}
           </div>

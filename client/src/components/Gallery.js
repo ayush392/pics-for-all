@@ -7,6 +7,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import heart_black from "../icons/heart_black.svg";
 import heart_red from "../icons/heart_red.svg";
 import pen from "../icons/pen.svg";
+import EditModal from "./EditModal";
 const baseUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:4000"
@@ -14,76 +15,50 @@ const baseUrl =
 
 function Gallery(props) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [modalOpen, setModalOpen] = useState(null);
   const { user } = useAuthContext();
 
   const navigate = useNavigate();
   // console.log(props);
   const { data, setData } = props;
 
-  async function downloadImage(url, id) {
-    try {
-      console.log(url, id);
-      const blob = new Blob([await fetch(url).then((res) => res.blob())]);
-      const fileUrl = window.URL.createObjectURL(blob);
-      let link = document.createElement("a");
-      link.href = fileUrl;
-      link.download = "Picsforall-" + id.slice(0, 5) + ".jpg";
-      link.click();
-    } catch (error) {
-      console.log(error);
-      console.log(error.message);
-    }
+  function downloadImage(url) {
+    const a = document.createElement("a");
+    a.href = url.replace("/upload/", "/upload/fl_attachment,");
+
+    // Force download by appending and clicking
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
-  function likePost(postId, username) {
+  const handleLike = (postId, type) => {
     if (!user) {
       navigate("/login");
       return;
     }
-    fetch(`${baseUrl}/api/posts/like`, {
-      method: "PUT",
+    fetch(`${baseUrl}/api/posts/${type}/${postId}`, {
+      method: "PATCH",
       headers: {
         "Content-type": "application/json",
         Authorization: `Bearer ${user.token}`,
       },
-      body: JSON.stringify({ postId, username }),
     })
       .then((res) => res.json())
       .then((response) => {
         const newData = data.map((posts) => {
-          if (posts._id === response._id) return response;
+          if (posts._id === response.data._id) {
+            return {
+              ...posts,
+              isLiked: response.data.isLiked,
+            }
+          }
           else return posts;
         });
         setData(newData);
         console.log(response);
       })
       .catch((e) => console.log(e.message));
-    // setLike(!isLike);
-  }
-  function unlikePost(postId, username) {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    fetch(`${baseUrl}/api/posts/unlike`, {
-      method: "PUT",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-      body: JSON.stringify({ postId, username }),
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        const newData = data.map((posts) => {
-          if (posts._id === response._id) return response;
-          else return posts;
-        });
-        setData(newData);
-        console.log(response);
-      })
-      .catch((e) => console.log(e.message));
-    // setLike(!isLike);
   }
 
   return (
@@ -96,9 +71,8 @@ function Gallery(props) {
                 return (
                   <div className="pos position-relative" key={x._id}>
                     <div
-                      className={`card border border-0 ${
-                        !isLoaded && "visually-hidden"
-                      }`}
+                      className={`card border border-0 ${!isLoaded && "visually-hidden"
+                        }`}
                     >
                       <div
                         className="overlay"
@@ -107,23 +81,19 @@ function Gallery(props) {
                       <div className="card-header bg-transparent p-2">
                         <div
                           className="profile"
-                          name={x.user.username}
-                          onClick={() => navigate(`../user/${x.user.username}`)}
+                          name={x.createdBy.username}
+                          onClick={() => navigate(`../user/${x.createdBy.username}`)}
                         >
-                          <Avatar
-                            w="25px"
-                            ch={x.user.fName[0]}
-                            str={x.user.username}
-                          />
+                          <Avatar w={'28px'} avatar={x.createdBy.avatar} />
                           <span className="ms-2">
-                            {x.user.fName + " " + x.user.lName}
+                            {x.createdBy.fName + " " + x.createdBy.lName}
                           </span>
                         </div>
                       </div>
 
                       <img
                         className="card-img-top d-block "
-                        src={x.image}
+                        src={x.image.thumbnail}
                         alt="..."
                         style={{ minHeight: "180px" }}
                         onLoad={() => setIsLoaded(true)}
@@ -133,12 +103,12 @@ function Gallery(props) {
                       <div className="card-body p-2">
                         <div className="d-flex align-items-center justify-content-between">
                           <div className="d-flex edit-like-btn">
-                            {user && x.liked_by.includes(user.username) ? (
+                            {x.isLiked ? (
                               <button
                                 className="btn btn-sm like-btn border-danger"
                                 onClick={() =>
                                   user
-                                    ? unlikePost(x._id, user.username)
+                                    ? handleLike(x._id, "unlike")
                                     : navigate("/login")
                                 }
                               >
@@ -153,7 +123,7 @@ function Gallery(props) {
                                 className="btn btn-sm like-btn border-secondary"
                                 onClick={() =>
                                   user
-                                    ? likePost(x._id, user.username)
+                                    ? handleLike(x._id, "like")
                                     : navigate("/login")
                                 }
                               >
@@ -165,20 +135,10 @@ function Gallery(props) {
                               </button>
                             )}
 
-                            {user && user.username === x.user.username && (
+                            {user && user?.username === x.createdBy?.username && (
                               <button
                                 className="btn btn-sm edit-btn border-secondary ms-2"
-                                onClick={() =>
-                                  navigate("/edit", {
-                                    state: {
-                                      url: x.image,
-                                      id: x._id,
-                                      description: x.description,
-                                      tags: x.tags,
-                                      location: x.location,
-                                    },
-                                  })
-                                }
+                                onClick={() => setModalOpen(x._id)}
                               >
                                 <span>Edit </span>
                                 <img
@@ -191,7 +151,7 @@ function Gallery(props) {
                           </div>
                           <button
                             className="btn btn-sm border-secondary download-btn"
-                            onClick={() => downloadImage(x.image, x._id)}
+                            onClick={() => downloadImage(x.image.thumbnail)}
                           >
                             Download
                           </button>
@@ -210,8 +170,8 @@ function Gallery(props) {
                 );
               })}
             {!isLoaded &&
-              [1, 2, 3, 4, 5, 6].map(() => (
-                <div className=" placeholder-glow">
+              [1, 2, 3, 4, 5, 6].map((i) => (
+                <div className=" placeholder-glow" key={i}>
                   <div
                     className=" placeholder w-100"
                     style={{ height: "250px" }}
@@ -221,6 +181,7 @@ function Gallery(props) {
           </Masonry>
         </ResponsiveMasonry>
       </div>
+      <EditModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
     </>
   );
 }

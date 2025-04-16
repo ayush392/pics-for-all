@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useParams } from 'react-router-dom'
 import Gallery from '../components/Gallery'
 const baseUrl = (process.env.NODE_ENV === 'development') ? 'http://localhost:4000' : 'https://picsforall-backend.onrender.com';
@@ -7,12 +8,20 @@ function SearchPage() {
   const { query } = useParams();
   const url = `${baseUrl}/api/posts/search/${query}`;
   const [data, setData] = useState([]);
+    const { user } = useAuthContext();
+  
 
   useEffect(() => {
-    fetch(url)
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${user?.token}`,
+      },
+    })
       .then((res) => res.json())
       .then((response) => {
-        setData(response);
+        setData(response.data);
         // console.log(response);
       })
       .catch((e) => {

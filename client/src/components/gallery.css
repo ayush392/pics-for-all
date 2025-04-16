@@ -5,6 +5,7 @@
     padding-bottom: 8px;
     display: inline-block;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .active-topic {
@@ -59,6 +60,12 @@ img.a {
 }
 
 /* Hover effects */
+
+.topic-link:hover {
+  color: black;
+  fill: black;
+  opacity: 0.75;
+}
 
 .pos:hover .download-btn,
 .pos:hover .profile,

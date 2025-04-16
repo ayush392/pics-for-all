@@ -85,8 +85,7 @@ function Header() {
               >
                 <Avatar
                   w="2rem"
-                  ch={user?.username[0].toUpperCase()}
-                  str={user?.username}
+                  avatar={user?.avatar}
                 />
               </span>
               <ul
@@ -193,8 +192,7 @@ function Header() {
               >
                 <Avatar
                   w="2.125rem"
-                  ch={user?.username[0].toUpperCase()}
-                  str={user?.username}
+                  avatar={user?.avatar}
                 />
               </span>
               <ul
