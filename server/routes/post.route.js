@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const requireAuth = require("../middleware/requireAuth");
 const upload = require("../config/multer")
+const requireUserId = require("../middleware/requireUserId");
 
 const {
   allPosts,
@@ -11,20 +12,16 @@ const {
   deletePost,
   createPost,
   singlePost,
-  downloadImage,
 } = require("../controllers/postController");
 
 // GET all posts
-router.get("/", allPosts); // TODO: add pagination
+router.get("/", requireUserId, allPosts); // TODO: add pagination
 
 // SEARCH posts with given query
-router.get("/search/:query", searchPost);  
+router.get("/search/:query", requireUserId, searchPost);  
 
 //CREATE a new post
 router.post("/", requireAuth, upload.single("image"), createPost);  
-
-// TODO: DOWNLOAD an image
-router.get("/download/:id", downloadImage);
 
 // LIKE a post
 router.patch("/like/:postId", requireAuth, likePost);  
@@ -36,7 +33,7 @@ router.patch("/unlike/:postId", requireAuth, dislikePost);
 router.patch("/:id", requireAuth, updatePost);
 
 // GET a single post
-router.get("/:id", singlePost);   
+router.get("/:id", requireUserId, singlePost);   
 
 // DELETE a post
 router.delete("/:id", requireAuth, deletePost);

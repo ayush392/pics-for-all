@@ -6,15 +6,25 @@ const { successResponse, errorResponse } = require("../utils/responseHandler");
 // GET
 const allPosts = async (req, res) => {
   try {
-    const posts = await Post.find({})
-      .select("image.thumbnail likedBy createdBy")
+    let posts = await Post.find({})
+      .select("image.thumbnail likedBy height width createdBy")
       .populate({
         path: "createdBy",
         model: "User",
         select: "fName lName username avatar",
       })
-      .sort({ createdAt: -1 });
-    successResponse(res, 200, posts);
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const userId = req?.user?.toString() || "";
+    const updatedPosts = posts.map(post => {
+      return {
+        ...post,
+        isLiked: post.likedBy.some(like => like.user.toString() === userId),
+        likedBy: post.likedBy.length,
+      }
+    })
+    successResponse(res, 200, updatedPosts);
   } catch (e) {
     errorResponse(res, e, 500);
   }
@@ -26,13 +36,13 @@ const searchPost = async (req, res) => {
     if (!searchQuery) {
       return errorResponse(res, "", 400, "BadRequest", "Search query is required");
     }
-    if (!/^[a-zA-Z0-9\s]+$/.test(query)){
+    if (!/^[a-zA-Z0-9\s]+$/.test(searchQuery)) {
       return errorResponse(res, "", 400, "BadRequest", "Invalid Search query");
     }
-    
+
     const regex = new RegExp(searchQuery, 'i'); // case-insensitive
 
-    const results = await Post.aggregate([
+    let results = await Post.aggregate([
       {
         $lookup: {
           from: 'users',
@@ -53,7 +63,40 @@ const searchPost = async (req, res) => {
           ],
         },
       },
+      {
+        $addFields: {
+          createdBy: {
+            _id: '$creator._id',
+            fName: '$creator.fName',
+            lName: '$creator.lName',
+            userName: '$creator.userName',
+            avatar: '$creator.avatar',
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          image: { thumbnail: 1 },
+          likedBy: 1,
+          height: 1,
+          width: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          createdBy: 1,
+        },
+      },
     ]);
+
+    const userId = req?.user?.toString() || "";
+    results = results.map(post => {
+      return {
+        ...post,
+        isLiked: post.likedBy.some(like => like.user.toString() === userId),
+        likedBy: post.likedBy.length,
+      }
+    })
+
     successResponse(res, 200, results);
 
   } catch (e) {
@@ -63,26 +106,28 @@ const searchPost = async (req, res) => {
 
 const singlePost = async (req, res) => {
   try {
-    const post = await Post.findById({ _id: req.params.id })
+    let post = await Post.findById({ _id: req.params.id })
       .populate({
         path: "createdBy",
         model: "User",
         select: "fName lName username avatar",
-      });
+      })
+      .lean();
 
     if (!post) {
       return errorResponse(res, "", 404, "NotFound", "Post not found");
     }
+
+    post = {
+      ...post,
+      likedBy: post.likedBy.length,
+      isLiked: (post.likedBy.some(like => like.user.toString() === req?.user?.toString()))
+    }
+
     successResponse(res, 200, post);
   } catch (error) {
     errorResponse(res, e, 500);
   }
-};
-
-const downloadImage = async (req, res) => {
-  // console.log('96');
-  let imgPath = res.post.image;
-  res.download(`./public/${imgPath}`);
 };
 
 // POST
@@ -137,7 +182,7 @@ const updatePost = async (req, res) => {
   let { description, location } = req.body;
 
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id).select("description location createdBy");
     if (!post)
       return errorResponse(res, "", 404, "NotFound", "Post not found");
 
@@ -158,16 +203,16 @@ const updatePost = async (req, res) => {
   }
 };
 
-// PUT
+// PATCH
 const likePost = async (req, res) => {
   let { postId } = req.params;
   postId = new mongoose.Types.ObjectId(postId);
   console.log(postId, 135);
   const userId = req.user;
   try {
-    const post = await Post.findOne({ _id: postId, "likedBy.user": userId });
+    const post = await Post.findOne({ _id: postId, "likedBy.user": userId }).select("_id likedBy")
     if (post) {
-      return successResponse(res, 200, post, "Post liked successfully prev");
+      return successResponse(res, 200, { _id: post._id, isLiked: true }, "Post liked successfully prev");
     }
     const x = await Post.findByIdAndUpdate(
       { _id: postId },
@@ -175,7 +220,7 @@ const likePost = async (req, res) => {
       { new: true }
     );
     // console.log(x, 137);
-    return successResponse(res, 200, x, "Post liked successfully");
+    return successResponse(res, 200, { _id: x._id, isLiked: true }, "Post liked successfully");
   } catch (e) {
     errorResponse(res, e, 500);
   }
@@ -191,7 +236,7 @@ const dislikePost = async (req, res) => {
       { $pull: { likedBy: { user: userId } } },
       { new: true }
     );
-    successResponse(res, 200, x, "Post disliked successfully");
+    successResponse(res, 200, { _id: x._id, isLiked: false }, "Post disliked successfully");
   } catch (e) {
     errorResponse(res, e, 500);
   }
@@ -213,7 +258,6 @@ module.exports = {
   allPosts,
   searchPost,
   singlePost,
-  downloadImage,
   createPost,
   updatePost,
   likePost,

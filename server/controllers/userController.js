@@ -1,6 +1,6 @@
 const User = require('../models/user.model')
 const Post = require('../models/post.model');
-
+const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const validator = require('validator')
 const bcrypt = require('bcrypt');
@@ -12,14 +12,16 @@ const createToken = function (payload) {
 
 //login user
 const loginUser = async function (req, res) {
-    let { emailOrUsername, password } = req.body
+    let { email, password } = req.body
+    let emailOrUsername = email;
+    console.log(emailOrUsername, password, 10);
     try {
         if (!emailOrUsername) return errorResponse(res, '', 400, 'BadRequest', 'Email or username is required')
         if (!password) return errorResponse(res, '', 400, 'BadRequest', 'Password is required')
 
         emailOrUsername = String(emailOrUsername).toLowerCase().trim();
 
-        const user = await User.findOne({ $or: [{ email: emailOrUsername }, { username:emailOrUsername }] }).select('-fName -lName -__v -createdAt -updatedAt')
+        const user = await User.findOne({ $or: [{ email: emailOrUsername }, { username: emailOrUsername }] }).select('-fName -lName -__v -createdAt -updatedAt')
         if (!user) return errorResponse(res, '', 400, 'BadRequest', 'User not found')
 
         const isMatch = await bcrypt.compare(password, user.password)
@@ -27,7 +29,7 @@ const loginUser = async function (req, res) {
 
         const token = createToken({ _id: user._id })
 
-        successResponse(res, 200, { email: user.email, token, username: user.username, avatar: user.avatar }, 'Login successful')
+        successResponse(res, 200, { uid: _id, token, username: user.username, avatar: user.avatar }, 'Login successful')
     } catch (e) {
         errorResponse(res, e, 500)
     }
@@ -48,7 +50,7 @@ const signupUser = async function (req, res) {
         if (!email) return errorResponse(res, '', 400, 'BadRequest', 'Email is required')
         if (!validator.isEmail(email)) return errorResponse(res, '', 400, 'BadRequest', 'Invalid email address')
         if (!username || username.length < 6) return errorResponse(res, '', 400, 'BadRequest', 'Username is required and must be at least 6 characters long')
-        if (!password || password.length < 6 || password.length>20) return errorResponse(res, '', 400, 'BadRequest', 'Password must be between 6 and 20 characters long')
+        if (!password || password.length < 6 || password.length > 20) return errorResponse(res, '', 400, 'BadRequest', 'Password must be between 6 and 20 characters long')
 
         const isExist = await User.findOne({ $or: [{ email }, { username }] })
         if (isExist) {
@@ -74,8 +76,8 @@ const signupUser = async function (req, res) {
 
 const postsOfUser = async function (req, res) {
     // const userId = req.params.id
-    const userId = new mongoose.Types.ObjectId(req.params.id);
     try {
+        const userId = new mongoose.Types.ObjectId(req.params.id);
         const posts = await Post.find({ createdBy: userId })
             .select("image.thumbnail likedBy createdBy")
             .populate({
@@ -91,8 +93,8 @@ const postsOfUser = async function (req, res) {
 }
 
 const likedPosts = async function (req, res) {
-    const userId = new mongoose.Types.ObjectId(req.params.id);
     try {
+        const userId = new mongoose.Types.ObjectId(req.params.id);
         const posts = await Post.find({ "likedBy.user": userId })
             .select("image.thumbnail likedBy createdBy")
             .populate({
@@ -108,12 +110,34 @@ const likedPosts = async function (req, res) {
 }
 
 const userInfo = async function (req, res) {
-    const userId = req.params.id
+    const username = String(req.params.username);
     // console.log(username, 28);
     try {
-        const post = await User.findById({ _id: userId }).select('-password -__v -createdAt -updatedAt')
+        const user = await User.findOne({ username }).select('-password -__v -createdAt -updatedAt')
+        if (!user) return errorResponse(res, '', 400, 'BadRequest', 'User not found')
+        
+        const userId = user._id;
+
+        const likedPosts = await Post.find({ "likedBy.user": userId })
+            .select("image.thumbnail likedBy createdBy")
+            .populate({
+                path: "createdBy",
+                model: "User",
+                select: "fName lName username avatar",
+            })
+            .sort({ createdAt: -1 });
+
+        const posts = await Post.find({ createdBy: userId })
+            .select("image.thumbnail likedBy createdBy")
+            .populate({
+                path: "createdBy",
+                model: "User",
+                select: "fName lName username avatar",
+            })
+            .sort({ createdAt: -1 });
+
         // console.log(post);
-        successResponse(res, 200, post)
+        successResponse(res, 200, {userPosts:posts, likedPosts, userInfo: user}, 'User info fetched successfully')
     } catch (e) {
         errorResponse(res, e, 500)
     }
