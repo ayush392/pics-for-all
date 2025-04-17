@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Gallery from "../components/Gallery";
 import { useAuthContext } from "../hooks/useAuthContext";
+import toast from "react-hot-toast";
 
 const baseUrl =
   process.env.NODE_ENV === "development"
@@ -14,19 +15,25 @@ function Home() {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${user?.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        setData(response.data);
-        // console.log(response);
-      })
-      .catch((e) => console.log(e.message));
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+        });
+        const json = await response.json();
+        if (!response.ok)
+          throw new Error(json.message)
+        setData(json.data);
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
+
+    fetchData();
   }, [user?.token]);
 
   return (

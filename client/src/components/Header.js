@@ -15,7 +15,6 @@ function Header() {
 
   function handleChange(e) {
     setQuery(e.target.value);
-    // console.log(query);
   }
 
   function handleSearch() {

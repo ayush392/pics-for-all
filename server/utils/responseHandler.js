@@ -8,18 +8,16 @@ const successResponse = (res, statusCode = 200, data = {}, message = 'Success') 
 };
 
 const errorResponse = (res, error, statusCode = 500, type = 'InternalError', message = 'Something went wrong') => {
-    if(statusCode === 500)
+    if (statusCode === 500)
         console.log(error.message || error);
     else
         console.log(type + ': ' + message);
-    
+
     return res.status(statusCode).json({
         status: 'error',
-        error: {
-            code: statusCode,
-            type,   // bad request, not found, internal error, etc.
-            message
-        }
+        code: statusCode,
+        type,   // bad request, not found, internal error, etc.
+        message
     });
 };
 

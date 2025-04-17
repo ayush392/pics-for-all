@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import Gallery from '../components/Gallery';
 import Avatar from '../components/Avatar';
 import { useAuthContext } from "../hooks/useAuthContext";
+import toast from 'react-hot-toast';
 
 const baseUrl =
   process.env.NODE_ENV === "development"
@@ -18,21 +19,28 @@ function UserProfile() {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    fetch(`${baseUrl}/api/user/info/${username}`, {
-      method: "GET",
-      headers:{
-        "Content-type": "application/json",
-        Authorization: `Bearer ${user?.token}`,
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/api/user/info/${username}`, {
+          method: "GET",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+        });
+        const json = await response.json();
+        if (!response.ok) {
+          throw new Error(json.message);
+        }
+        setUserInfo(json?.data?.userInfo);
+        setUserPosts(json?.data?.userPosts);
+        setLikedPosts(json?.data?.likedPosts);
       }
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        setUserInfo(response?.data?.userInfo);
-        setUserPosts(response?.data?.userPosts);
-        setLikedPosts(response?.data?.likedPosts);
-        // console.log(response);
-      })
-      .catch((e) => console.log(e));
+      catch (e) {
+        toast.error(e.message)
+      }
+    }
+    fetchData();
   }, [username, user?.token]);
 
   // console.log(user);

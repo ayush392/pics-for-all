@@ -32,33 +32,40 @@ function Gallery(props) {
     document.body.removeChild(a);
   }
 
-  const handleLike = (postId, type) => {
+  const handleLike = async (postId, type) => {
     if (!user) {
       navigate("/login");
       return;
     }
-    fetch(`${baseUrl}/api/posts/${type}/${postId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        const newData = data.map((posts) => {
-          if (posts._id === response.data._id) {
-            return {
-              ...posts,
-              isLiked: response.data.isLiked,
-            }
-          }
-          else return posts;
-        });
-        setData(newData);
-        console.log(response);
+    try {
+      const response = await fetch(`${baseUrl}/api/posts/${type}/${postId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
       })
-      .catch((e) => console.log(e.message));
+
+      const json = await response.json();
+      if (!response.ok) {
+        throw new Error(json.message);
+      }
+
+      const newData = data.map((posts) => {
+        if (posts._id === response.data._id) {
+          return {
+            ...posts,
+            isLiked: response.data.isLiked,
+          }
+        }
+        else return posts;
+      });
+
+      setData(newData);
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.message);
+    }
   }
 
   return (

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
+import toast from "react-hot-toast";
 const baseUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:4000"
@@ -11,10 +11,7 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const { user } = useAuthContext();
-  // const id = state?.id;
-  // const imageUrl = state?.url;
-  const navigate = useNavigate();
-  // console.log(id);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,22 +19,26 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
         const response = await fetch(`${baseUrl}/api/posts/${modalOpen}`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${user?.token}`,
           },
         });
         const json = await response.json();
+        if (!response.ok)
+          throw new Error(json.message);
+
         setData(json.data);
       } catch (error) {
         console.log(error.message);
+        toast.error(error.message);
       }
     }
     modalOpen && fetchData();
-  }, [modalOpen])
+  }, [modalOpen, user?.token]);
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (!user) {
-      alert("Please Login");
+      toast.error("Please Login!")
       setIsUpdating(false);
       return;
     }
@@ -52,22 +53,25 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
         body: JSON.stringify({ description: data.description, location: data.location }),
       });
       const json = await response.json();
-      if (setImgDetail){
-        setImgDetail(prev => {return {...prev, location: json.data.location, description: json.data.description}})
+      if (!response.ok)
+        throw new Error(json.message);
+
+      if (setImgDetail) {
+        setImgDetail(prev => { return { ...prev, location: json.data.location, description: json.data.description } })
       }
 
-      alert("Post updated successfully");
+      toast.success(json.message);
       setModalOpen(null)
     } catch (error) {
-      setIsUpdating(false);
-      alert(error.message);
       console.log(error);
+      setIsUpdating(false);
+      toast.error(error.message)
     }
   }
 
   async function handleDelete() {
     if (!user) {
-      alert("please login");
+      toast.error("please login");
       return;
     }
     if (!window.confirm("Do you want to delete this image?")) {
@@ -82,15 +86,16 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
         },
       });
       const json = await response.json();
-      console.log(json);
-      if (json) {
-        alert("Post deleted successfully");
-        setModalOpen(null);
+      if (!response.ok) {
+        throw new Error(json.message);
       }
+      alert("Post deleted successfully");
+      setModalOpen(null);
+
     } catch (error) {
-      setIsDeleting(false);
-      alert(error.message);
       console.log(error);
+      setIsDeleting(false);
+      toast.error(error.message);
     }
   }
 
@@ -116,7 +121,7 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
                       <label className="form-label">Description</label>
                       <textarea
                         value={data.description}
-                        onChange={(e) => setData(prev => ({ ...prev, ["description"]: e.target.value }))}
+                        onChange={(e) => setData(prev => ({ ...prev, description: e.target.value }))}
                         type="text"
                         className="form-control"
                         rows="4"
@@ -136,7 +141,7 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
                       <input
                         type="text"
                         value={data.location}
-                        onChange={(e) => setData(prev => ({ ...prev, ["location"]: e.target.value }))}
+                        onChange={(e) => setData(prev => ({ ...prev, location: e.target.value }))}
                         className="form-control"
                       />
                     </div>

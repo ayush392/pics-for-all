@@ -7,6 +7,7 @@ import heart_red from "../icons/heart_red.svg";
 import pen from "../icons/pen.svg";
 import rectangle_icon from "../icons/rectangle-icon.svg";
 import EditModal from "../components/EditModal";
+import toast from "react-hot-toast";
 
 const baseUrl =
   process.env.NODE_ENV === "development"
@@ -24,17 +25,28 @@ function ImageDetails() {
   const [modalOpen, setModalOpen] = useState(null);
 
   useEffect(() => {
-    fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${user?.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((response) => setImgDetail(response?.data))
-      .catch((e) => console.log(e));
-  }, [url, user]);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+        });
+
+        const json = await response.json();
+        if (!response.ok) {
+          throw new Error(json.message);
+        }
+        setImgDetail(json.data);
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
+
+    fetchData();
+  }, [user?.token]);
 
   function downloadImage(url) {
     const a = document.createElement("a");
@@ -46,27 +58,32 @@ function ImageDetails() {
     document.body.removeChild(a);
   }
 
-  function handleLike(postId, type) {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    fetch(`${baseUrl}/api/posts/${type}/${postId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-      // body: JSON.stringify({ postId, username }),
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        // console.log(response);
-        setImgDetail(prev => {
-          return { ...prev, isLiked: response.data.isLiked }
-        });
+  async function handleLike(postId, type) {
+    try {
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+      const response = fetch(`${baseUrl}/api/posts/${type}/${postId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
       })
-      .catch((e) => console.log(e.message));
+      const json = await response.json();
+      if (!response.ok) {
+        throw new Error(json.message);
+      }
+
+      setImgDetail(prev => {
+        return { ...prev, isLiked: response.data.isLiked }
+      });
+
+    } catch (error) {
+      toast.error(error.message);
+
+    }
   }
 
   return (
@@ -242,7 +259,7 @@ function ImageDetails() {
           )}
         </div>
       )}
-      <EditModal modalOpen={modalOpen} setModalOpen={setModalOpen} setImgDetail={setImgDetail}/>
+      <EditModal modalOpen={modalOpen} setModalOpen={setModalOpen} setImgDetail={setImgDetail} />
     </>
   );
 }

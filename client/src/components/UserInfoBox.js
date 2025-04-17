@@ -8,12 +8,11 @@ const baseUrl =
 
 function UserInfoBox() {
   const { username } = useParams();
-  const userUrl = `${baseUrl}/api/user/info/${username}`;
-
   const [userInfo, setUserInfo] = useState([]);
+  // const userUrl = ;
 
   useEffect(() => {
-    fetch(userUrl)
+    fetch(`${baseUrl}/api/user/info/${username}`)
       .then((res) => res.json())
       .then((response) => {
         setUserInfo(response.data);

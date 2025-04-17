@@ -1,15 +1,11 @@
 import { useState } from 'react'
 import { useAuthContext } from './useAuthContext'
-import { useNavigate } from 'react-router-dom'
 const baseUrl = (process.env.NODE_ENV === 'development') ? 'http://localhost:4000' : 'https://picsforall-backend.onrender.com';
-
 
 export const useLogin = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(null)
     const { dispatch } = useAuthContext();
-
-    const navigate = useNavigate();
 
     const login = async function (email, password) {
         setIsLoading(true);
@@ -20,26 +16,22 @@ export const useLogin = () => {
             headers: { 'Content-type': 'application/json' },
             body: JSON.stringify({ email, password })
         })
-
         const json = await response.json();
-        console.log(json);
 
         if (!response.ok) {
             setIsLoading(false);
-            setError(json.error);
-            throw Error(json.error);
+            setError(json.message);
+            throw new Error(json.message);
         }
 
-        if (response.ok) {
-            //save user to local storage
-            localStorage.setItem('user', JSON.stringify(json.data))
+        // console.log(json, "useLogin22");
+        localStorage.setItem('user', JSON.stringify(json.data))
 
-            // update authContext
-            dispatch({ type: 'LOGIN', payload: json.data })
+        // update authContext
+        dispatch({ type: 'LOGIN', payload: json.data })
 
-            setIsLoading(false);
-            // navigate(1);
-        }
+        setIsLoading(false);
+        return true;
     }
 
     return { login, isLoading, error }

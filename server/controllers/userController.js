@@ -6,8 +6,8 @@ const validator = require('validator')
 const bcrypt = require('bcrypt');
 const { errorResponse, successResponse } = require('../utils/responseHandler');
 
-const createToken = function (payload) {
-    return jwt.sign(payload, process.env.SECRET, { expiresIn: '3d' })
+const createToken = function (_id) {
+    return jwt.sign({_id}, process.env.SECRET, { expiresIn: '3d' })
 }
 
 //login user
@@ -25,11 +25,17 @@ const loginUser = async function (req, res) {
         if (!user) return errorResponse(res, '', 400, 'BadRequest', 'User not found')
 
         const isMatch = await bcrypt.compare(password, user.password)
-        if (!isMatch) return errorResponse(res, '', 400, 'BadRequest', 'Invalid credentials')
 
-        const token = createToken({ _id: user._id })
+        if (!isMatch) {
+            if (!validator.isEmail(emailOrUsername))
+                return errorResponse(res, '', 400, 'BadRequest', 'Invalid email or username')
+            return errorResponse(res, '', 400, 'BadRequest', 'Invalid username or password')
+        }
 
-        successResponse(res, 200, { uid: _id, token, username: user.username, avatar: user.avatar }, 'Login successful')
+
+        const token = createToken(user._id)
+
+        successResponse(res, 200, { uid: user._id, token, username: user.username, avatar: user.avatar }, 'Login successful')
     } catch (e) {
         errorResponse(res, e, 500)
     }
@@ -65,7 +71,7 @@ const signupUser = async function (req, res) {
             fName, lName, email, username, password: hashPassword,
         })
         if (!newUser) return errorResponse(res, '', 400, 'BadRequest', 'User not created')
-        const token = createToken({ _id: newUser._id })
+        const token = createToken(newUser._id)
 
         successResponse(res, 201, { email: newUser.email, token, username: newUser.username, avatar: newUser.avatar }, 'Signup successful')
 
@@ -115,7 +121,7 @@ const userInfo = async function (req, res) {
     try {
         const user = await User.findOne({ username }).select('-password -__v -createdAt -updatedAt')
         if (!user) return errorResponse(res, '', 400, 'BadRequest', 'User not found')
-        
+
         const userId = user._id;
 
         const likedPosts = await Post.find({ "likedBy.user": userId })
@@ -137,7 +143,7 @@ const userInfo = async function (req, res) {
             .sort({ createdAt: -1 });
 
         // console.log(post);
-        successResponse(res, 200, {userPosts:posts, likedPosts, userInfo: user}, 'User info fetched successfully')
+        successResponse(res, 200, { userPosts: posts, likedPosts, userInfo: user }, 'User info fetched successfully')
     } catch (e) {
         errorResponse(res, e, 500)
     }

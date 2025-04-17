@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useSignup } from '../hooks/useSignup';
 import './css/styles.css'
 import { Navigate, useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast';
 
 function Signup() {
     const [fName, setFName] = useState('');
@@ -17,10 +18,14 @@ function Signup() {
         e.preventDefault();
         // console.log(email, password)
         try {
-            await signup(fName, lName, email, username, password);
-            navigate('/', { replace: true })
+            const isSuccess = await signup(fName, lName, email, username, password);
+            if(isSuccess){
+              toast.success('Signup successful!')
+              navigate('/', { replace: true })
+            }
         } catch (e) {
             console.log(e);
+            toast.error(e.message);
         }
     }
 
@@ -50,6 +55,7 @@ function Signup() {
                 onChange={(e) => setFName(e.target.value)}
                 value={fName}
                 className="form-control"
+                required
               />
             </div>
             <div className="col-6">
@@ -59,6 +65,7 @@ function Signup() {
                 onChange={(e) => setLName(e.target.value)}
                 value={lName}
                 className="form-control"
+                required
               />
             </div>
             <div className="col-12">
@@ -68,6 +75,7 @@ function Signup() {
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 className="form-control"
+                required
               />
             </div>
             <div className="col-12">
@@ -77,7 +85,11 @@ function Signup() {
                 onChange={(e) => setUsername(e.target.value)}
                 value={username}
                 className="form-control"
+                required
               />
+              <div className="form-text text-secondary ">
+                Your username must be atleast 6 characters long.
+              </div>
             </div>
             <div className="col-12">
               <label className="form-label">Password</label>
@@ -86,13 +98,13 @@ function Signup() {
                 className="form-control"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
+                required
               />
               <div className="form-text text-secondary ">
-                Your password must be min. 8 characters long and contain letters
-                and numbers.
+                Your password must be atleast 6 characters long.
               </div>
             </div>
-            <div className="col-12">
+            <div className="col-12 fs-6">
               {error && <div className="text-danger">{error}</div>}
             </div>
             <div className="col-12">
