@@ -6,12 +6,15 @@ import "./gallery.css";
 import Avatar from "./Avatar";
 import GradientText from "./GradientText";
 import logo from "../icons/bitmap.webp";
+import toast from "react-hot-toast";
+import UploadModal from "./UploadModal";
 
 function Header() {
   const { logout } = useLogout();
   const { user } = useAuthContext();
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
 
   function handleChange(e) {
     setQuery(e.target.value);
@@ -23,7 +26,7 @@ function Header() {
   }
 
   function handleClick() {
-    user ? navigate("/upload") : navigate("/login");
+    user ? setModalOpen(true) : toast.error("Please login to submit a photo");
   }
 
   return (
@@ -104,11 +107,11 @@ function Header() {
                     Submit a photo
                   </button>
                 </li>
-                <li>
+                {/* <li>
                   <Link to={"/plus"} className="dropdown-item text-info">
                     <GradientText text="PicsForAll+" />
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <hr className="dropdown-divider" />
                 </li>
@@ -168,8 +171,7 @@ function Header() {
         </form>
         <button
           type="button"
-          onClick={() => navigate("/plus")}
-          className="btn btn-sm border-secondary "
+          className="btn btn-sm border-secondary invisible "
         >
           <GradientText text="PicsForAll+" />
         </button>
@@ -212,7 +214,7 @@ function Header() {
                   </button>
                 </li>
                 <li>
-                  <Link to={"/plus"} className="dropdown-item text-info">
+                  <Link to={"/plus"} className="dropdown-item text-info d-none">
                     <GradientText text="PicsForAll+" />
                   </Link>
                 </li>
@@ -236,6 +238,8 @@ function Header() {
           )}
         </div>
       </nav>
+
+      <UploadModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
     </>
   );
 }

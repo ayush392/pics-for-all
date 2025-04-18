@@ -60,7 +60,9 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
         setImgDetail(prev => { return { ...prev, location: json.data.location, description: json.data.description } })
       }
 
+      setIsUpdating(false);
       toast.success(json.message);
+      setData(null)
       setModalOpen(null)
     } catch (error) {
       console.log(error);
@@ -90,8 +92,9 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
         throw new Error(json.message);
       }
       alert("Post deleted successfully");
+      setData(null)
       setModalOpen(null);
-
+      setIsDeleting(false);
     } catch (error) {
       console.log(error);
       setIsDeleting(false);
@@ -107,13 +110,13 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
       {modalOpen && data && user &&
         <div>
           <div className={`position-fixed top-0 start-0 d-flex align-items-center bg-dark bg-opacity-50 h-100 w-100 p-3`} style={{ backdropFilter: 'blur(8px)', zIndex: '5' }}>
-            <div className="container position-relative bg-light rounded p-4 w-auto" style={{ zIndex: '6', maxHeight: '80vh' }}>
+            <div className="container position-relative bg-light rounded p-4 w-auto" style={{ zIndex: '6', maxHeight: '80vh', overflowY: 'auto', maxWidth: '800px' }}>
 
               <h2 className=" pb-3 pb-md-3 ">Edit post</h2>
 
-              <div className="d-md-flex">
+              <div className="d-flex flex-column flex-md-row">
                 <div className={`${data?.height > data?.width ? "w-75" : 'w-100'}`}>
-                  <img src={data?.image?.thumbnail} alt="imgPreview" className="d-block ms-auto me-auto rounded img-fluid" />
+                  <img src={data?.image?.thumbnail} alt="imgPreview" className="d-block ms-auto me-auto rounded img-fluid" style={{ maxHeight: '70vh', objectFit: 'contain' }} />
                 </div>
                 <div className="w-100 mt-4 mt-md-0 ms-md-4 ms-lg-5 d-flex flex-column justify-content-between">
                   <form>
@@ -167,7 +170,7 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
                 </div>
               </div>
 
-              <button type="button" className="btn-close d-inline position-absolute top-0 left-0 end-0 me-4 mt-4" aria-label="Close" onClick={() => setModalOpen(null)}></button>
+              <button type="button" className="btn-close d-inline position-absolute top-0 left-0 end-0 me-4 mt-4" aria-label="Close" onClick={() => { setData(null); setModalOpen(null) }}></button>
 
             </div>
           </div>

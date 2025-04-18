@@ -8,6 +8,7 @@ import heart_black from "../icons/heart_black.svg";
 import heart_red from "../icons/heart_red.svg";
 import pen from "../icons/pen.svg";
 import EditModal from "./EditModal";
+import toast from "react-hot-toast";
 const baseUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:4000"

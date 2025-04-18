@@ -21,13 +21,12 @@ function App() {
       <Routes>
         {/* TODO: Modify these navigate links */}
         {/* <Route path='/login' element={!user ? <Login /> : <Navigate to='/' />} /> */}
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/upload" element={<UploadImage />} />
-        <Route path="/edit" element={<EditModal />} />
+        <Route path="/upload" element={user ? <UploadImage /> : <Login />} />
 
         <Route path="/" element={<SharedLayout />}>
           <Route index element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={user ? <Navigate to={-1} /> : <Login />} />
+          <Route path="/signup" element={user ? <Navigate to={-1} /> : <Signup />} />
           <Route path="s/photos/:query" element={<SearchPage />} />
           <Route path="photos/:id" element={<ImageDetails />} />
           <Route path="plus" element={<Plus />} />

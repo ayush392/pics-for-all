@@ -6,6 +6,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/user.route')
 const postRoutes = require('./routes/post.route');
 const paymentRoute = require('./routes/payment');
+const schedulePingServer = require("./utils/pingServer");
 
 const app = express();
 
@@ -17,6 +18,16 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 // app.use(express.static('public'))
 
+app.get("/", (req, res) => {
+    try {
+        res.status(200).json({ statusCode: 200, message: "Server is up and running!" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ statusCode: 500, message: "Internal server error" });
+    }
+});
+
+schedulePingServer(); // ping server every 14 minutes to prevent it from sleeping
 
 app.use('/api/user', userRoutes);
 app.use('/api/posts', postRoutes);

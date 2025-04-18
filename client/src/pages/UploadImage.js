@@ -15,6 +15,8 @@ function UploadImage() {
   const [isUploading, setIsUploading] = useState(false);
   const { user } = useAuthContext();
   const navigate = useNavigate();
+  const [previewURL, setPreviewURL] = useState(null);
+
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -62,6 +64,19 @@ function UploadImage() {
     }
   }
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (["image/jpg", "image/jpeg", "image/png", "image/webp"].includes(file.type) === false) {
+        // toast.error("Please select a valid image file (jpg, jpeg, png)");
+        alert(file.type)
+        return;
+      }
+      setImage(file);
+      setPreviewURL(URL.createObjectURL(file));
+    }
+  };
+
   async function validateAndSetDimensions(file, e) {
     const allowedFileTypes = [
       "image/gif",
@@ -90,6 +105,55 @@ function UploadImage() {
       <div className="container">
         <h1 className="m-4 text-center">Submit a photo</h1>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <div className='w-100'>
+            {/* <img src={data?.image?.thumbnail} alt="imgPreview" className="d-block ms-auto me-auto rounded img-fluid" /> */}
+            <div className="d-flex flex-column align-items-center mt-4">
+              <label
+                htmlFor="fileInput"
+                className="upload-box border border-secondary rounded d-flex justify-content-center align-items-center overflow-hidden"
+                style={{
+                  width: '150px',
+                  height: '150px',
+                  cursor: 'pointer',
+                  backgroundColor: '#f8f9fa',
+                  position: 'relative',
+                }}
+              >
+                {previewURL ? (
+                  <img
+                    src={previewURL}
+                    alt="Preview"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="40"
+                    height="40"
+                    fill="currentColor"
+                    className="text-secondary"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                  </svg>
+                )}
+              </label>
+
+              <input
+                type="file"
+                id="fileInput"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
+              />
+
+              {/* {fileName && <small className="mt-2 text-muted">{fileName}</small>} */}
+            </div>
+          </div>
           <div className="mb-3">
             <label className="form-label">Upload an image</label>
             <input

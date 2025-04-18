@@ -123,7 +123,7 @@ function ImageDetails() {
 
       {/* ------------------------------- IMAGE ------------------------------- */}
       <img
-        className={`img-det ${!isLoaded && "visually-hidden"}`}
+        className={`img-det rounded  ${!isLoaded && "visually-hidden"}`}
         src={imgDetail?.image?.url}
         alt="xyz"
         onLoad={() => setIsLoaded(true)}

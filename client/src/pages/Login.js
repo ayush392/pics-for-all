@@ -9,10 +9,10 @@ function Login() {
   const [password, setPassword] = useState("");
   const { login, error, isLoading } = useLogin();
 
-  const handleSubmit = async function (e) {
+  const handleSubmit = async function (e, role='user') {
     e.preventDefault();
     try {
-      const isSuccess = await login(email, password);
+      const isSuccess = await login(email, password, role);
       if (isSuccess) {
         toast.success("Login successful!");
         navigate(-1, { replace: true });
@@ -62,11 +62,8 @@ function Login() {
           </div>
           <div className="mb-3">
             <button
-              type="submit"
-              onClick={() => {
-                setEmail("test1@user.com");
-                setPassword("ABCabc123!");
-              }}
+              type="button"
+              onClick={(e) => handleSubmit(e, "guest")}
               className="btn btn-outline-dark w-100"
               disabled={isLoading}
             >

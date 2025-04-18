@@ -7,23 +7,23 @@ const baseUrl =
     : "https://picsforall-backend.onrender.com";
 
 function UserInfoBox() {
-  const { username } = useParams();
-  const [userInfo, setUserInfo] = useState([]);
-  // const userUrl = ;
+  // const { username } = useParams();
+  // const [userInfo, setUserInfo] = useState([]);
+  // // const userUrl = ;
 
-  useEffect(() => {
-    fetch(`${baseUrl}/api/user/info/${username}`)
-      .then((res) => res.json())
-      .then((response) => {
-        setUserInfo(response.data);
-        // console.log(response[0], 17);
-      })
-      .catch((e) => console.log(e));
-  }, [userUrl]);
+  // useEffect(() => {
+  //   fetch(`${baseUrl}/api/user/info/${username}`)
+  //     .then((res) => res.json())
+  //     .then((response) => {
+  //       setUserInfo(response.data);
+  //       // console.log(response[0], 17);
+  //     })
+  //     .catch((e) => console.log(e));
+  // }, [userUrl]);
 
   return (
     <>
-      <div className="container my-3 my-md-4">
+      {/* <div className="container my-3 my-md-4">
         <div
           className=" d-flex flex-column flex-md-row m-auto"
           style={{ width: "fit-content" }}
@@ -52,7 +52,7 @@ function UserInfoBox() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       <br />
     </>
   );

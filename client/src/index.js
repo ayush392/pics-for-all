@@ -12,7 +12,7 @@ root.render(
   <React.StrictMode>
     <AuthContextProvider>
       <BrowserRouter>
-        <Toaster position="top-right"/>
+        <Toaster />
         <App />
       </BrowserRouter>
     </AuthContextProvider>

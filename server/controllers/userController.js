@@ -12,7 +12,11 @@ const createToken = function (_id) {
 
 //login user
 const loginUser = async function (req, res) {
-    let { email, password } = req.body
+    let { email, password, role } = req.body
+    if(role==='guest'){
+        email = process.env.GUEST_EMAIL;
+        password = process.env.GUEST_PASSWORD;
+    }
     let emailOrUsername = email;
     console.log(emailOrUsername, password, 10);
     try {

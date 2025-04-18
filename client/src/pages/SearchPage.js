@@ -31,19 +31,21 @@ function SearchPage() {
       }
     }
     fetchData();
-  }, [user?.token]);
+  }, [query, user?.token]);
 
   // console.log(data);
 
   return (
     <div className="container">
       {data.length === 0 ? (
-        <>
+        <div className='d-flex align-items-center justify-content-center' style={{ height: "80vh" }}>
+          <div className='text-center'>
           <h3 className="mt-3 mt-md-4 text-black opacity-75">
             No results found for {query}
           </h3>
-          <h4 className="text-secondary">try searching for something else</h4>
-        </>
+          <h5 className="text-secondary mt-2">Try searching with other keyword.</h5>
+        </div>
+        </div>
       ) : (
         <>
           <h4 className="my-3 my-md-4 text-black opacity-75">
