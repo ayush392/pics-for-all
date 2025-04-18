@@ -7,7 +7,7 @@ const https = require("https");
 const RENDER_URL = process.env.BACKEND_URI;
 
 const schedulePingServer = ()=>{
-    cron.schedule("*/10 * * * * *", () => {
+    cron.schedule("*/14 * * * *", () => {
         https.get(RENDER_URL, (res) => {
             console.log(`[${new Date().toISOString()}] Server responded with status: ${res.statusCode}`);
         }).on("error", (err) => {
