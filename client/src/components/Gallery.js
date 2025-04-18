@@ -49,7 +49,7 @@ function Gallery(props) {
         throw new Error(json.message);
       }
 
-      if(props.setRefetch){
+      if (props.setRefetch) {
         props.setRefetch(prev => !prev);
       }
 
@@ -73,11 +73,13 @@ function Gallery(props) {
   return (
     <>
       <div className="container mb-4 mb-lg-5 ">
-        {data.length === 0 && <div>
-          <h3 className="text-center mt-4 text-secondary">
-            No image found.
-          </h3>
-          </div>}
+        {
+          data && data.length === 0 && props.setRefetch && <div>
+            <h3 className="text-center mt-4 text-secondary">
+              No image found.
+            </h3>
+          </div>
+        }
         <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}>
           <Masonry gutter={"1.5rem"}>
             {data &&
@@ -107,12 +109,12 @@ function Gallery(props) {
 
                       <img
                         className="card-img-top d-block "
-                        src={x.image.thumbnail}
+                        src={x.image.thumbnail.replace("q_auto", "q_auto:eco")}
                         alt="..."
                         style={{ minHeight: "180px" }}
                         onLoad={() => setIsLoaded(true)}
                         onClick={() => navigate(`/photos/${x._id}`)}
-                        loading="lazy"
+                      // loading="lazy"
                       />
 
                       <div className="card-body p-2">

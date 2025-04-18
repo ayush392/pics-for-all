@@ -121,8 +121,8 @@ function ImageDetails() {
       {/* ------------------------------- IMAGE ------------------------------- */}
       <img
         className={`img-det rounded  ${!isLoaded && "visually-hidden"}`}
-        src={imgDetail?.image?.url}
-        alt="xyz"
+        src={imgDetail?.image?.url.replace("/upload/", "/upload/f_auto,q_auto:best/")}
+        alt={imgDetail?.description.slice(0, 20) + "..."}
         onLoad={() => setIsLoaded(true)}
       />
       {!isLoaded && (
