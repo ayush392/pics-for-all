@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -8,11 +8,13 @@ import GradientText from "./GradientText";
 import logo from "../icons/bitmap.webp";
 import toast from "react-hot-toast";
 import UploadModal from "./UploadModal";
+import { useParams } from "react-router-dom";
 
 function Header() {
+  const { query: searchQuery } = useParams();
   const { logout } = useLogout();
   const { user } = useAuthContext();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(searchQuery || "");
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -21,13 +23,22 @@ function Header() {
   }
 
   function handleSearch() {
-    if (query === "") return;
+    if (query === ""){
+      toast.error("Please enter a word to search.");
+      return;
+    };
     navigate(`/s/photos/${query}`);
   }
 
   function handleClick() {
     user ? setModalOpen(true) : toast.error("Please login to submit a photo");
   }
+
+  useEffect(()=>{
+    if (searchQuery) {
+      setQuery(searchQuery);
+    }
+  }, [searchQuery])
 
   return (
     <>

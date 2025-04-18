@@ -88,10 +88,11 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
       if (!response.ok) {
         throw new Error(json.message);
       }
-      alert("Post deleted successfully");
+      toast.success("Image deleted successfully");
       setData(null)
       setModalOpen(null);
       setIsDeleting(false);
+      window.location.reload();
     } catch (error) {
       console.log(error);
       setIsDeleting(false);

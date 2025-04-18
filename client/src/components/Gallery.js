@@ -49,11 +49,15 @@ function Gallery(props) {
         throw new Error(json.message);
       }
 
+      if(props.setRefetch){
+        props.setRefetch(prev => !prev);
+      }
+
       const newData = data.map((posts) => {
-        if (posts._id === response.data._id) {
+        if (posts._id === json.data._id) {
           return {
             ...posts,
-            isLiked: response.data.isLiked,
+            isLiked: json.data.isLiked,
           }
         }
         else return posts;
@@ -69,6 +73,11 @@ function Gallery(props) {
   return (
     <>
       <div className="container mb-4 mb-lg-5 ">
+        {data.length === 0 && <div>
+          <h3 className="text-center mt-4 text-secondary">
+            No image found.
+          </h3>
+          </div>}
         <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}>
           <Masonry gutter={"1.5rem"}>
             {data &&
@@ -103,6 +112,7 @@ function Gallery(props) {
                         style={{ minHeight: "180px" }}
                         onLoad={() => setIsLoaded(true)}
                         onClick={() => navigate(`/photos/${x._id}`)}
+                        loading="lazy"
                       />
 
                       <div className="card-body p-2">

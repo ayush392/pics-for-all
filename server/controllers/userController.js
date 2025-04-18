@@ -128,23 +128,41 @@ const userInfo = async function (req, res) {
 
         const userId = user._id;
 
-        const likedPosts = await Post.find({ "likedBy.user": userId })
+        let likedPosts = await Post.find({ "likedBy.user": userId })
             .select("image.thumbnail likedBy createdBy")
             .populate({
                 path: "createdBy",
                 model: "User",
                 select: "fName lName username avatar",
             })
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean();
 
-        const posts = await Post.find({ createdBy: userId })
+        let posts = await Post.find({ createdBy: userId })
             .select("image.thumbnail likedBy createdBy")
             .populate({
                 path: "createdBy",
                 model: "User",
                 select: "fName lName username avatar",
             })
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean();
+
+        likedPosts = likedPosts.map(post => {
+            return {
+                ...post,
+                likedBy: post.likedBy.length,
+                isLiked: (post.likedBy.some(like => like.user.toString() === req?.user?.toString()))
+            }
+        })
+        
+        posts = posts.map(post => {
+            return {
+                ...post,
+                likedBy: post.likedBy.length,
+                isLiked: (post.likedBy.some(like => like.user.toString() === req?.user?.toString()))
+            }
+        })
 
         // console.log(post);
         successResponse(res, 200, { userPosts: posts, likedPosts, userInfo: user }, 'User info fetched successfully')

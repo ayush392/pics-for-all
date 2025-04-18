@@ -14,6 +14,7 @@ function UserProfile() {
   const [userPosts, setUserPosts] = useState([]);
   const [openTab, setOpenTab] = useState("photos");
   const { user } = useAuthContext();
+  const [refetch, setRefetch] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +39,7 @@ function UserProfile() {
       }
     }
     fetchData();
-  }, [username, user?.token]);
+  }, [username, user?.token, refetch]);
 
   // console.log(user);
   // console.log(user.photos);
@@ -110,8 +111,8 @@ function UserProfile() {
       <hr className="mt-0" />
       <br />
       {openTab === 'likes' ?
-        <Gallery data={likedPosts} setData={setLikedPosts} />
-        : <Gallery data={userPosts} setData={setUserPosts} />}
+        <Gallery data={likedPosts} setData={setLikedPosts} setRefetch={setRefetch} />
+        : <Gallery data={userPosts} setData={setUserPosts} setRefetch={setRefetch}/>}
 
     </>
   );
