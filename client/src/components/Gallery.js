@@ -9,10 +9,7 @@ import heart_red from "../icons/heart_red.svg";
 import pen from "../icons/pen.svg";
 import EditModal from "./EditModal";
 import toast from "react-hot-toast";
-const baseUrl =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:4000"
-    : "https://picsforall-backend.onrender.com";
+const baseUrl = process.env.REACT_APP_BACKEND_URI;
 
 function Gallery(props) {
   const [isLoaded, setIsLoaded] = useState(false);

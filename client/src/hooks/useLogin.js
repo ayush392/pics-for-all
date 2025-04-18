@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuthContext } from './useAuthContext'
-const baseUrl = (process.env.NODE_ENV === 'development') ? 'http://localhost:4000' : 'https://picsforall-backend.onrender.com';
+const baseUrl = process.env.REACT_APP_BACKEND_URI;
 
 export const useLogin = () => {
     const [error, setError] = useState(null)

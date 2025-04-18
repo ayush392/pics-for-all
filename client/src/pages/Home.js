@@ -3,10 +3,7 @@ import Gallery from "../components/Gallery";
 import { useAuthContext } from "../hooks/useAuthContext";
 import toast from "react-hot-toast";
 
-const baseUrl =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:4000"
-    : "https://picsforall-backend.onrender.com";
+const baseUrl =process.env.REACT_APP_BACKEND_URI
 
 function Home() {
   const [data, setData] = useState([]);

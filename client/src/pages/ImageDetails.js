@@ -9,10 +9,7 @@ import rectangle_icon from "../icons/rectangle-icon.svg";
 import EditModal from "../components/EditModal";
 import toast from "react-hot-toast";
 
-const baseUrl =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:4000"
-    : "https://picsforall-backend.onrender.com";
+const baseUrl = process.env.REACT_APP_BACKEND_URI
 
 function ImageDetails() {
   // console.log(state);
