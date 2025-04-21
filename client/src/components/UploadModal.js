@@ -12,7 +12,12 @@ function UploadModal({ modalOpen, setModalOpen }) {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
+        console.log(file);
         if (file) {
+            if(file.size > 5 * 1024 * 1024) { // 5MB limit
+                toast.error("File size exceeds 5MB limit!");
+                return;
+            }
             if (["image/jpg", "image/jpeg", "image/png"].includes(file.type) === false) {
                 toast.error("Please select a valid image file (jpg, jpeg, png)");
                 return;

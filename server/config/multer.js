@@ -12,7 +12,7 @@ module.exports = multer({
             cb(null, (file.originalname || "image") + '-' + uniqueSuffix + ext);
           },        
     }),
-    limits: { fileSize: 7 * 1024 * 1024 }, // 7MB limit
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
     fileFilter: (req, file, cb) => {
         let ext = path.extname(file.originalname);
         if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png") {

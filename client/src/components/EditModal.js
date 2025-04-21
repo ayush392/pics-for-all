@@ -128,15 +128,6 @@ function EditModal({ modalOpen, setModalOpen, setImgDetail }) {
                         rows="4"
                       />
                     </div>
-                    {/* <div className="mb-3">
-                      <label className="form-label">Tags</label>
-                      <input
-                        value={data.tags}
-                        onChange={(e) => setData(prev => ({ ...prev, ["tags"]: e.target.value }))}
-                        type="text"
-                        className="form-control"
-                      />
-                    </div> */}
                     <div className="mb-3">
                       <label className="form-label">Location</label>
                       <input

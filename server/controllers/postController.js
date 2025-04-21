@@ -1,7 +1,10 @@
 const { default: mongoose } = require("mongoose");
 const cloudinary = require("../config/cloudinary");
 const Post = require("../models/post.model");
+const User = require("../models/user.model")
 const { successResponse, errorResponse } = require("../utils/responseHandler");
+const axios = require("axios");
+const emailNotification = require("../utils/emailNotification");
 
 // GET
 const allPosts = async (req, res) => {
@@ -57,7 +60,7 @@ const searchPost = async (req, res) => {
           $or: [
             { location: regex },
             { tags: regex },
-            {description: regex},
+            { description: regex },
             { 'creator.fName': regex },
             { 'creator.lName': regex },
             { 'creator.username': regex },
@@ -135,6 +138,7 @@ const singlePost = async (req, res) => {
 const createPost = async (req, res) => {
   try {
     const { location } = req.body;
+    successResponse(res, 200, {}, "You will be notified via email once the image is processed");
     // console.log(req.file);
 
     //req.file is an object with the following properties:
@@ -160,19 +164,64 @@ const createPost = async (req, res) => {
 
     const { tags, width, height, secure_url } = cloudinaryData;
     const description = cloudinaryData?.info?.detection?.captioning?.data?.caption || " ";
-    const thumbnailUrl = secure_url.replace('/upload/', '/upload/f_auto,q_auto,w_400/');
+    const thumbnailUrl = secure_url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_380/');
 
-    const newPost = await Post.create({
-      image: { url: secure_url, thumbnail: thumbnailUrl },
-      description,
-      tags,
-      height,
-      width,
-      location: location || "",
-      createdBy: req.user,
-    })
+    try {
+      const response = await axios.post(
+        `https://${process.env.CLOUDINARY_API_KEY}:${process.env.CLOUDINARY_API_SECRET}@api.cloudinary.com/v2/analysis/${process.env.CLOUDINARY_CLOUD_NAME}/analyze/ai_vision_moderation`,
+        {
+          source: {
+            uri: secure_url,
+          },
+          rejection_questions: [
+            "Is this image unrelated to nature?",
+            "Does this image lack animals or birds or wildlife?",
+            "Does the image contain alcohol, nudity, or offensive content?"
+          ]
+        }
+      );
 
-    successResponse(res, 200, newPost, "Post created successfully");
+      const analysisRes = response.data?.data?.analysis?.responses;
+      let lackNature = false, lackWildlife = false, isOffensive = true;
+
+      analysisRes.forEach(res => {
+        if (res.prompt === "Is this image unrelated to nature?") {
+          lackNature = (res.value === "yes");
+        } else if (res.prompt === "Does this image lack animals or birds or wildlife?") {
+          lackWildlife = (res.value === "yes");
+        } else if (res.prompt === "Does the image contain alcohol, nudity, or offensive content?") {
+          isOffensive = (res.value === "yes");
+        }
+      })
+
+      const user = await User.findById(req.user).select("email fName lName");
+
+      console.log("Lack Nature: ", lackNature, " | Lack Wildlife: ", lackWildlife, " | Is Offensive: ", isOffensive);
+
+      if (!(lackNature && lackWildlife) && !isOffensive) {
+        await Post.create({
+          image: { url: secure_url, thumbnail: thumbnailUrl },
+          description,
+          tags,
+          height,
+          width,
+          location: location || "",
+          createdBy: req.user,
+        })
+
+        // accept image
+        emailNotification(user, thumbnailUrl, 'accepted')
+
+      }
+      else {
+        // reject image
+        emailNotification(user, thumbnailUrl, 'rejected')
+      }
+
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: 'Something went wrong' });
+    }
   } catch (e) {
     errorResponse(res, e, 500);
   }
@@ -185,10 +234,10 @@ const updatePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id).select("description location createdBy");
     if (!post)
-      return errorResponse(res, "", 404, "NotFound", "Post not found");
+      return errorResponse(res, "", 404, "NotFound", "Image not found");
 
     if (post.createdBy.toString() !== req.user.toString()) {
-      return errorResponse(res, "", 403, "Forbidden", "You are not authorized to update this post");
+      return errorResponse(res, "", 403, "Forbidden", "You are not authorized to update this Image");
     }
 
     if (description && description.trim().length > 10)
@@ -198,7 +247,7 @@ const updatePost = async (req, res) => {
 
     const updatedPost = await post.save();
 
-    successResponse(res, 200, updatedPost, "Post updated successfully");
+    successResponse(res, 200, updatedPost, "Image updated successfully");
   } catch (e) {
     errorResponse(res, e, 500);
   }
@@ -213,7 +262,7 @@ const likePost = async (req, res) => {
   try {
     const post = await Post.findOne({ _id: postId, "likedBy.user": userId }).select("_id likedBy")
     if (post) {
-      return successResponse(res, 200, { _id: post._id, isLiked: true }, "Post liked successfully prev");
+      return successResponse(res, 200, { _id: post._id, isLiked: true }, "Post liked already");
     }
     const x = await Post.findByIdAndUpdate(
       { _id: postId },
@@ -221,7 +270,7 @@ const likePost = async (req, res) => {
       { new: true }
     );
     // console.log(x, 137);
-    return successResponse(res, 200, { _id: x._id, isLiked: true }, "Post liked successfully");
+    return successResponse(res, 200, { _id: x._id, isLiked: true }, "Image liked");
   } catch (e) {
     errorResponse(res, e, 500);
   }
@@ -237,7 +286,7 @@ const dislikePost = async (req, res) => {
       { $pull: { likedBy: { user: userId } } },
       { new: true }
     );
-    successResponse(res, 200, { _id: x._id, isLiked: false }, "Post disliked successfully");
+    successResponse(res, 200, { _id: x._id, isLiked: false }, "Image disliked");
   } catch (e) {
     errorResponse(res, e, 500);
   }
@@ -249,7 +298,7 @@ const deletePost = async (req, res) => {
   // const desertRef = fbStorage.ref(storage, imgUrl);
   try {
     await Post.findByIdAndDelete(id);
-    successResponse(res, 200, {}, "Post deleted successfully");
+    successResponse(res, 200, {}, "Image deleted successfully");
   } catch (e) {
     errorResponse(res, e, 500);
   }
