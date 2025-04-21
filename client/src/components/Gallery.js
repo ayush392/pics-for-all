@@ -12,13 +12,17 @@ import toast from "react-hot-toast";
 const baseUrl = process.env.REACT_APP_BACKEND_URI;
 
 function Gallery(props) {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [loadedImages, setLoadedImages] = useState({});
   const [modalOpen, setModalOpen] = useState(null);
   const { user } = useAuthContext();
 
   const navigate = useNavigate();
   // console.log(props);
   const { data, setData } = props;
+
+  const handleImageLoad = (id) => {
+    setLoadedImages(prev => ({ ...prev, [id]: true }));
+  };
 
   function downloadImage(url) {
     const a = document.createElement("a");
@@ -86,10 +90,18 @@ function Gallery(props) {
               data.map((x) => {
                 return (
                   <div className="pos position-relative" key={x._id}>
-                    <div
-                      className={`card border border-0 ${!isLoaded && "visually-hidden"
-                        }`}
-                    >
+                    <img
+                      src={x.image.thumbnail.replace(
+                        "upload/f_auto,q_auto:eco,w_380/",
+                        "upload/f_auto,e_blur:1000,q_1,w_20/"
+                      )}
+                      alt="blur"
+                      className={`img-fluid position-absolute top-0 start-0 w-100 h-100 object-fit-cover transition-opacity ${loadedImages[x._id] ? "opacity-0" : "opacity-100"}`}
+                      style={{ zIndex: 1 }}
+                    />
+
+                    <div className={`card border-0 position-relative bg-white transition-opacity ${!loadedImages[x._id] ? "opacity-0" : ""}`}
+                      style={{ zIndex: 2 }}>
                       <div
                         className="overlay"
                         onClick={() => navigate(`/photos/${x._id}`)}
@@ -108,13 +120,13 @@ function Gallery(props) {
                       </div>
 
                       <img
-                        className="card-img-top d-block "
-                        src={x.image.thumbnail.replace("q_auto", "q_auto:eco")}
+                        className="d-block w-100"
+                        src={x.image.thumbnail}
                         alt="..."
-                        style={{ minHeight: "180px" }}
-                        onLoad={() => setIsLoaded(true)}
+                        style={{ minHeight: "180px", objectFit: "cover" }}
+                        onLoad={() => handleImageLoad(x._id)}
                         onClick={() => navigate(`/photos/${x._id}`)}
-                      // loading="lazy"
+                        loading="lazy"
                       />
 
                       <div className="card-body p-2">
@@ -175,30 +187,20 @@ function Gallery(props) {
                         </div>
                       </div>
                     </div>
-                    {!isLoaded && (
-                      <div className=" placeholder-glow">
-                        <div
-                          className=" placeholder w-100"
-                          style={{ height: "200px" }}
-                        ></div>
-                      </div>
-                    )}
+                    {/* {!loadedImages[x._id] && (
+                      <img src={x.image.thumbnail.replace("upload/f_auto,q_auto,w_400", "upload/q_1,e_blur:200,w_20/")}
+                        alt="blur placeholder"
+                        className={`img-fluid bg-danger position-absolute top-0 start-0 w-100 h-100 object-fit-cover ${loadedImages[x._id] ? "opacity-0" : "opacity-100"}`}
+                      />
+                    )} */}
                   </div>
                 );
               })}
-            {!isLoaded &&
-              [1, 2, 3, 4, 5, 6].map((i) => (
-                <div className=" placeholder-glow" key={i}>
-                  <div
-                    className=" placeholder w-100"
-                    style={{ height: "250px" }}
-                  ></div>
-                </div>
-              ))}
+
           </Masonry>
         </ResponsiveMasonry>
       </div>
-      <EditModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
+      {modalOpen && <EditModal modalOpen={modalOpen} setModalOpen={setModalOpen} />}
     </>
   );
 }
