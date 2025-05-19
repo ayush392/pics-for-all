@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
     }
 });
 
-schedulePingServer(); // ping server every 14 minutes to prevent it from sleeping
+//schedulePingServer(); // ping server every 14 minutes to prevent it from sleeping
 
 app.use('/api/user', userRoutes);
 app.use('/api/posts', postRoutes);
