@@ -40,7 +40,7 @@ const emailNotification = async (user, url, type) => {
         await transporter.sendMail(mailOptions(user, url, type));
 
     } catch (error) {
-
+        console.error("Error sending email:", error);
     }
 }
 

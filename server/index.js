@@ -12,8 +12,24 @@ const app = express();
 
 dbConnect();
 
+const corsOptions = {
+    origin: function (origin, callback) {
+      const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
+      
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['set-cookie']
+  };
+
 // middleware
-app.use(cors({ Credential: true }))
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 // app.use(express.static('public'))
